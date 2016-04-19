@@ -47,6 +47,6 @@
 #define ERR_FUNCTIONEXEC             33 ///< An error executing this function was detected
 #define ERR_DECRYPT                  64 ///< The data could not be decrypted due to an error
 #define ERR_ALLOC                   128 ///< Not enough free space to allocate data
-#define ERR_UNKNOWN                 254 ///< An error occurred that does not match any of the other ones (this should never happen)				
+#define ERR_UNKNOWN                 255 ///< An error occurred that does not match any of the other ones (this should never happen)				
 
 #endif // VSLAB_MACROS_H
