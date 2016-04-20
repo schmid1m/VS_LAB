@@ -24,7 +24,7 @@ typedef struct msg_header
 	uint8_t type:4;							///< The message Type @sa MSG_REQUEST @sa MSG_RESPONSE @sa MSG_ERROR
 	uint16_t length;						///< The Length of the message data field
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
-} msg_header;
+}__attribute__((__packed__)) msg_header;
 
 /// @brief Structure for a message
 /// This structure holds pointers for the message header and the data structure
@@ -40,7 +40,7 @@ typedef struct dat_polynom_request
 {
 	int16_t clientID;						///< The ID of the requesting client
 	uint16_t generator;						///< The generator polynome
-} dat_polynom_request;
+}__attribute__((__packed__)) dat_polynom_request;
 
 /// @brief Decrypt data
 /// Request to decrypt data. Polynome has to be set first. @sa dat_polynom_request
@@ -50,7 +50,7 @@ typedef struct dat_decrypt_request
 	uint16_t blockID:14;					///< A (random) Block ID to tell the packets apart
 	uint16_t fill:2;						///< The amount of bytes at the end of the data field to ignore
 	uint16_t firstElement;					///< First element of the data structure (16 Bit Chunks)
-} dat_decrypt_request;
+}__attribute__((__packed__)) dat_decrypt_request;
 
 /// @brief Return decrypted data
 /// Returns the data from successfull decryption
@@ -60,7 +60,7 @@ typedef struct dat_decrypt_response
 	uint16_t fill:2;						///< The amount of bytes at the end of the data field to ignore
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 	uint8_t firstElement;					///< First element of the data structure (8 Bit Chunks)
-} dat_decrypt_response;
+}__attribute__((__packed__)) dat_decrypt_response;
 
 /// @brief Unlocks the server
 /// After the server is not needed anymore you can unlock it with this function.
@@ -69,14 +69,14 @@ typedef struct dat_unlock_request
 {
 	int16_t clientID;						///< The ID of the current client
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
-} dat_unlock_request;
+}__attribute__((__packed__)) dat_unlock_request;
 
 /// @brief Broadcast response
 /// Each server responds to a broadcast sending its IP address
 typedef struct dat_broadcast_response
 {
 	uint8_t serverIP[4];					///< 4 times 1 Byte IP V4 address
-} dat_broadcast_response;
+}__attribute__((__packed__)) dat_broadcast_response;
 
 /// @brief Response to a status request
 /// Servers respond with their current status
@@ -85,7 +85,7 @@ typedef struct dat_status_response
 	int16_t clientID;						///< The ID of the currently connected client
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 	uint32_t wordCount;						///< Amount of Decrypted data words for this client
-} dat_status_response;
+}__attribute__((__packed__)) dat_status_response;
 
 /// @brief Error frame
 /// 
@@ -94,6 +94,6 @@ typedef struct error
 	uint8_t errCode;						///< The error code of the occurring error @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
 	uint16_t blockID:14;					///< Block ID where the error occurred (for ERR_DECRYPT and ERR_SERVERINUSE). Else 0.
 	uint16_t reserved:10;					///< Reserved @sa VALUE_RESERVED
-} error;
+}__attribute__((__packed__)) error;
 
 #endif // PACKET_LIB_H
