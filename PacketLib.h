@@ -10,7 +10,12 @@
 **************************************************************/
 #ifndef PACKET_LIB_H
 #define PACKET_LIB_H
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
+#define ERROR -1
+#define SUCCESS 1
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
@@ -95,5 +100,8 @@ typedef struct error
 	uint16_t blockID:14;					///< Block ID where the error occurred (for ERR_DECRYPT and ERR_SERVERINUSE). Else 0.
 	uint16_t reserved:10;					///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) error;
+
+/// FUNCTION PROTOTYPES ///
+int server_broadcast_response(struct sockaddr_in *serverSocket);
 
 #endif // PACKET_LIB_H
