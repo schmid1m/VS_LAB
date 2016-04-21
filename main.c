@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Macros.h"
-#include "PacketLib.h"
+#include "Macro.h"
+#include "PaketLib.h"
 
 int main()
 {
