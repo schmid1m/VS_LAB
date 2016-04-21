@@ -24,9 +24,11 @@ int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, 
 	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
 	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
 		// error
+		free((void*)msg_header);
 		return ERROR;
 	}else{
 		// no error
+		free((void*)msg_header);
 		return SUCCESS;
 	}
 }
