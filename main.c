@@ -6,8 +6,7 @@
 #include "Macros.h"
 #include "PacketLib.h"
 
-int main()
-{
+/*int main(){
     // Arbitrary file Input (Data and length)
     uint16_t input[] = { 0xFD32, 0x8CAC, 0x6905, 0x4329 };
     uint32_t length = 8;
@@ -28,7 +27,7 @@ int main()
     // Fill header with data
     my_msg.header->priority= 0x61;
     my_msg.header->version = 14;
-    my_msg.header->mode = TYPE_CLIENT;
+    my_msg.header->mode = MODE_CLIENT;
     my_msg.header->func = FNC_POLYNOME;
     my_msg.header->type = MSG_REQUEST;
     my_msg.header->length = 4;
@@ -59,14 +58,14 @@ int main()
     // "read" the data
     
     // Allocate header memory
-    my_msg.head = malloc(sizeof(msg_header));
+    //my_msg.head = malloc(sizeof(msg_header));
     // Copy header data
-    memcpy(my_msg.head, msg_send, HEADER_LENGTH);
+    //memcpy(my_msg.head, msg_send, HEADER_LENGTH);
     
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));
     // Copy data
-    memcpy(my_msg.data, ((void*)msg_send) + HEADER_LENGTH, my_msg.header->length);
+    memcpy(my_msg.data, ((const void*)msg_send) + HEADER_LENGTH, my_msg.header->length);
     
     // Print received header data
     printf("header: %x\n",   my_msg.header->priority);
@@ -82,4 +81,4 @@ int main()
     
     // End Program
     return 0;
-}
+}*/

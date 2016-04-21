@@ -102,6 +102,6 @@ typedef struct error
 }__attribute__((__packed__)) error;
 
 /// FUNCTION PROTOTYPES ///
-int server_broadcast_response(struct sockaddr_in *serverSocket);
+int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
 
 #endif // PACKET_LIB_H
