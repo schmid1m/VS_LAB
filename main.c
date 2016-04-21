@@ -28,7 +28,7 @@ int main()
     // Fill header with data
     my_msg.header->priority= 0x61;
     my_msg.header->version = 14;
-    my_msg.header->mode = TYPE_CLIENT;
+    my_msg.header->mode = MODE_CLIENT;
     my_msg.header->func = FNC_POLYNOME;
     my_msg.header->type = MSG_REQUEST;
     my_msg.header->length = 4;
@@ -59,9 +59,9 @@ int main()
     // "read" the data
     
     // Allocate header memory
-    my_msg.head = malloc(sizeof(msg_header));
+    my_msg.header = malloc(sizeof(msg_header));
     // Copy header data
-    memcpy(my_msg.head, msg_send, HEADER_LENGTH);
+    memcpy(my_msg.header, msg_send, HEADER_LENGTH);
     
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));

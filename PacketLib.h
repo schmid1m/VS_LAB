@@ -10,6 +10,7 @@
 **************************************************************/
 #ifndef PACKET_LIB_H
 #define PACKET_LIB_H
+#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
