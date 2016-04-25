@@ -70,12 +70,12 @@ int main(){
     my_msg.header = malloc(sizeof(msg_header));
     // Copy header data
     memcpy(my_msg.header, msg_send, HEADER_LENGTH);
-    
+
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));
     // Copy data
     memcpy(my_msg.data, ((const void*)msg_send) + HEADER_LENGTH, my_msg.header->length);
-    
+
     // Print received header data
     printf("header: %x\n",   my_msg.header->priority);
     printf("header: %d\n",   my_msg.header->version);

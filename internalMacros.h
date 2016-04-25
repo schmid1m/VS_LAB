@@ -9,6 +9,9 @@
 #ifndef VSLAB_INT_MACROS_H
 #define VSLAB_INT_MACROS_H
 
+/// \defgroup internal Macros for internal use only
+/// @{
+
 // Protocol specific definitions
 #define HEADER_LENGTH                 8 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields
@@ -34,5 +37,7 @@
 #define MSG_REQUEST                   3 ///< Request the specified function
 #define MSG_RESPONSE                  4 ///< Response to an earlier request
 #define MSG_ERROR                    15 ///< An error occurred decoding or executing
+
+/// @}
 
 #endif // VSLAB_INT_MACROS_H

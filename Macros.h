@@ -9,6 +9,9 @@
 #ifndef VSLAB_MACROS_H
 #define VSLAB_MACROS_H
 
+/// \defgroup macros Macros
+/// Macros and Enumerations used for the API
+/// @{
 // Error code definitions
 #define NO_ERROR                   	  0 ///< No error detected
 #define ERR_PACKETLENGTH              1 ///< The packet length is invalid or does not match the actual length
@@ -31,18 +34,22 @@
 #define SUCCESS                       1 ///< Function ran without problems
 
 // Function ID Definitions
+/// @brief An enumeration of all possible functions
+/// This is used as function ID reference
 typedef enum{
-    POLYNOME_REQ,
-    POLYNOME_RSP,
-    DECRYPT_REQ,
-    DECRYPT_RSP,
-    UNLOCK_REQ,
-    UNLOCK_RSP,
-    BROADCAST_REQ,
-    BROADCAST_RSP,
-    STATUS_REQ,
-    STATUS_RSP,
-    ERROR_RSP
+    POLYNOME_REQ,                       ///< Function : set polynome; Type : Request
+    POLYNOME_RSP,                       ///< Function : set polynome; Type : Response
+    DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
+    DECRYPT_RSP,                        ///< Function : decrypt data; Type : Response
+    UNLOCK_REQ,                         ///< Function : unlock server; Type : Request
+    UNLOCK_RSP,                         ///< Function : unlock server; Type : Response
+    BROADCAST_REQ,                      ///< Function : broadcast; Type : Request
+    BROADCAST_RSP,                      ///< Function : broadcast; Type : Response
+    STATUS_REQ,                         ///< Function : status check; Type : Request
+    STATUS_RSP,                         ///< Function : status check; Type : Response
+    ERROR_RSP                           ///< Function : any; Type : Error
 }FID;
+
+/// @}
 
 #endif // VSLAB_MACROS_H

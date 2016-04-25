@@ -17,7 +17,9 @@
 #include "PacketLib.h"
 #include "Macros.h"
 #include "internalMacros.h"
+#include "commonAPI.h"
 
+/*
 int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
 	msg_header *msgHeader = malloc(sizeof(msg_header)+sizeof(dat_broadcast_response));		// storage for the complete response
 	dat_broadcast_response *msgData = (dat_broadcast_response*)(msgHeader+sizeof(msg_header));	// get the pointer to the data fields
@@ -69,6 +71,7 @@ int get_mode(void *data){
 	msg_header *msgHeader = (msg_header*)data;
 	return msgHeader->mode;
 }
+*/
 
 
 uint8_t check_packet(msg* packet)
@@ -109,4 +112,19 @@ uint8_t check_packet(msg* packet)
     // TODO check if Header is consistent
     // TODO check data field
     return NO_ERROR;
+}
+
+uint8_t recv_msg(msg* packet)
+{
+
+}
+
+FID get_msg_type(msg* packet)
+{
+
+}
+
+uint8_t send_msg(msg* packet)
+{
+
 }

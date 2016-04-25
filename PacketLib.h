@@ -11,18 +11,22 @@
 
 #include <stdint.h>
 
+/// \defgroup structs Structures
+/// Data Structures for internal use
+/// @{
+
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
 /// The internal structure holds all the values then.
 typedef struct msg_header
 {
-	uint8_t priority;						///< The priority of the message (0 = HIGH, 255 = LOW)
-	uint8_t version;						///< The current version of the script @sa PROTOCOL_VERSION
-	uint8_t mode;							///< The mode of the message (sender type) @sa MODE_STATUS @sa MODE_SERVER @sa MODE_CLIENT
-	uint8_t func:4;							///< The called function of this message @sa FNC_POLYNOME @sa FNC_DECRYPT @sa FNC_UNLOCK @sa FNC_BROADCAST @sa FNC_STATUS
+    uint8_t priority;						///< The priority of the message (0 = HIGH, 255 = LOW)
+    uint8_t version;						///< The current version of the script @sa PROTOCOL_VERSION
+    uint8_t mode;							///< The mode of the message (sender type) @sa MODE_STATUS @sa MODE_SERVER @sa MODE_CLIENT
+    uint8_t func:4;							///< The called function of this message @sa FNC_POLYNOME @sa FNC_DECRYPT @sa FNC_UNLOCK @sa FNC_BROADCAST @sa FNC_STATUS
     uint8_t type:4;							///< The message Type @sa MSG_REQUEST @sa MSG_RESPONSE @sa MSG_ERROR
-	uint16_t length;						///< The Length of the message data field
-	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
+    uint16_t length;						///< The Length of the message data field
+    uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) msg_header;
 
 /// @brief Set polynome request
@@ -77,10 +81,11 @@ typedef struct dat_status_response
 }__attribute__((__packed__)) dat_status_response;
 
 /// @brief Error frame
-/// 
+/// An error message frame
+/// @sa macros
 typedef struct error
 {
-    uint8_t errCode;						///< The error code of the occurring error @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
+    uint8_t errCode;						///< The error code of the occurring error @sa NO_ERROR @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_HEADER_DATA @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_NO_PACKET @sa ERR_UNKNOWN
     uint16_t blockID;   					///< Block ID where the error occurred (for ERR_DECRYPT and ERR_SERVERINUSE). Else 0.
 }__attribute__((__packed__)) error;
 
@@ -92,14 +97,28 @@ typedef struct msg
     void* data;								///< A pounter to the data field of the structure. Nullpointer for no data field. @sa dat_polynom_request @sa dat_decrypt_request @sa dat_decrypt_response @sa dat_unlock_request @sa dat_broadcast_response @sa dat_status_response @sa error
 }__attribute__((__packed__)) msg;
 
-/// FUNCTION PROTOTYPES ///
+/// @}
+
+/// \defgroup functions Internal Functions
+/// Functions for internal use only
+/// @{
 
 /// \brief Check a packet for internal errors
+/// @author Michel Schmidt
 /// \param[in] packet : The packet structure
-/// \return The error code that occurred @sa NO_ERROR @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
+/// \return The error code that occurred
+/// @sa macros
 uint8_t check_packet(msg* packet);
 
+/// \brief Sends a message via UDP
+/// @author <Author Name Here>
+/// \param[in] packet: The packet to send
+/// \return The error code that occurred
+/// @sa msg
+/// @sa macros
 uint8_t send_msg(msg* packet);
+
+/// @}
 
 /*********************************/
 /* OLD FUNCTIONS.... TO BE MOVED */
@@ -112,9 +131,7 @@ uint8_t send_msg(msg* packet);
 /// @param[in] clientAddress : pointer to the client socket struct
 /// \return ERROR if sending message isn't successful otherwise you'll get SUCCESS
 int server_broadcast_rsp(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
-
-
-int server_status_rsp(int socketdesc, struct sockaddr_in *statusAddress, ...);*/
+*/
 
 /*********************************/
 /* OLD FUNCTIONS.... TO BE MOVED */
