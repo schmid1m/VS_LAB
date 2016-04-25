@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+//#include <arpa/inet.h>
 #include "PacketLib.h"
 #include "Macros.h"
 #include "stdlib.h"
@@ -20,34 +21,21 @@ int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, 
 	msgHeader->version = PROTOCOL_VERSION;
 
 	// fill the data field
-<<<<<<< HEAD
-	// take a look on how you get ip to ip field
-	//memcpy((void*)msgData->serverIP, (const void*)serverSocket->sin_addr, 4);				// copy the 4 Bytes INET address into the data fields, maybe we need htonl() but i don't think so
-=======
-    memcpy((void*)msgData->serverIP, &(serverSocket->sin_addr), 4);							// copy the 4 Bytes INET address into the data fields, maybe we need htonl() but i don't think so
->>>>>>> devel
+	msgData->serverIP = ntohs(clientAddress->sin_addr.s_addr);
 
 	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
 	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
 		// error
-<<<<<<< HEAD
 		free((void*)msgHeader);
-		return ERROR;
-	}else{
-		// no error
-		free((void*)msgHeader);
-=======
-        free((void*)msgHeader);
-		return ERROR;
+		return -1;
 	}else{
 		// no error
         free((void*)msgHeader);
->>>>>>> devel
-		return SUCCESS;
+		return 1;
 	}
 }
 
-<<<<<<< HEAD
+
 /// @brief get the priority from a client
 /// @param[out] priority 0...255
 /// @param[in] received data on socket
@@ -72,7 +60,7 @@ int get_mode(void *data){
 	return msgHeader->mode;
 }
 
-=======
+
 int check_packet(msg packet)
 {
     // check packet length
@@ -112,4 +100,3 @@ int check_packet(msg packet)
     // TODO check data field
     return NO_ERROR;
 }
->>>>>>> devel

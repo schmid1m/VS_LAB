@@ -78,7 +78,7 @@ typedef struct dat_unlock_request
 /// Each server responds to a broadcast sending its IP address
 typedef struct dat_broadcast_response
 {
-	uint8_t serverIP[4];					///< 4 times 1 Byte IP V4 address
+	uint32_t serverIP;					///< 4 times 1 Byte IP V4 address
 }__attribute__((__packed__)) dat_broadcast_response;
 
 /// @brief Response to a status request
@@ -100,11 +100,6 @@ typedef struct error
 }__attribute__((__packed__)) error;
 
 /// FUNCTION PROTOTYPES ///
-<<<<<<< HEAD
-int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
-=======
-
-
 /// @brief Send a response to a broadcast from a client
 /// @param[in] socketdesc : socket descriptor of the socket that should be used
 /// @param[in] serverSocket : pointer to the server socket struct
@@ -116,6 +111,5 @@ int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, 
 /// \param[in] packet : The packet structure
 /// \return The error code that occurred @sa NO_ERROR @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
 int check_packet(msg packet);
->>>>>>> devel
 
 #endif // PACKET_LIB_H
