@@ -14,6 +14,7 @@
 #define HEADER_LENGTH                 8 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields
 #define MAX_PACKET_LENGTH         60000 ///< The maximal packet length (60kB)
+#define NO_BLOCK_ID                   0 ///< No block ID is present
 
 // Version definition
 #define PROTOCOL_VERSION             14 ///< The version of the protocol
@@ -54,5 +55,20 @@
 // General Definitions
 #define ERROR                        -1 ///< An error occurred during excecution
 #define SUCCESS                       1 ///< Function ran without problems
+
+// Function ID Definitions
+typedef enum{
+    POLYNOME_REQ,
+    POLYNOME_RSP,
+    DECRYPT_REQ,
+    DECRYPT_RSP,
+    UNLOCK_REQ,
+    UNLOCK_RSP,
+    BROADCAST_REQ,
+    BROADCAST_RSP,
+    STATUS_REQ,
+    STATUS_RSP,
+    ERROR_RSP
+}FID;
 
 #endif // VSLAB_MACROS_H
