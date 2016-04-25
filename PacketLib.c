@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "PacketLib.h"
 #include "Macros.h"
 
@@ -19,16 +24,16 @@ int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, 
 	msgHeader->version = PROTOCOL_VERSION;
 
 	// fill the data field
-	memcpy((void*)msgData->serverIP, serverSocket->sin_addr, 4);							// copy the 4 Bytes INET address into the data fields, maybe we need htonl() but i don't think so
+    memcpy((void*)msgData->serverIP, &(serverSocket->sin_addr), 4);							// copy the 4 Bytes INET address into the data fields, maybe we need htonl() but i don't think so
 
 	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
 	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
 		// error
-		free((void*)msg_header);
+        free(msgHeader);
 		return ERROR;
 	}else{
 		// no error
-		free((void*)msg_header);
+        free(msgHeader);
 		return SUCCESS;
 	}
 }
