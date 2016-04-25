@@ -6,11 +6,6 @@
 #include "PacketLib.h"
 #include "Macros.h"
 
-/// @brief Send a response to a broadcast from a client
-/// @param[out] ERROR if sending message isn't successful otherwise you'll get SUCCESS
-/// @param[in] socketdesc socket descriptor of the socket that should be used
-/// @param[in] serverSocket pointer to the server socket struct
-/// @param[in] clientAddress pointer to the client socket struct
 int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
 	msg_header *msgHeader = malloc(sizeof(msg_header)+sizeof(dat_broadcast_response));		// storage for the complete response
 	dat_broadcast_response *msgData = (dat_broadcast_response*)(msgHeader+sizeof(msg_header));	// get the pointer to the data fields
@@ -29,11 +24,51 @@ int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, 
 	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
 	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
 		// error
-        free(msgHeader);
+        free((void*)msgHeader);
 		return ERROR;
 	}else{
 		// no error
-        free(msgHeader);
+        free((void*)msgHeader);
 		return SUCCESS;
 	}
+}
+
+int check_packet(msg packet)
+{
+    // check packet length
+    if(packet.header->length > MAX_PACKET_LENGTH)
+    {
+        return ERR_PACKETLENGTH;
+    }
+    // check protocol version
+    if(packet.header->version != PROTOCOL_VERSION)
+    {
+        return ERR_INVALIDVERSION;
+    }
+    // check if mode is valid
+    if((packet.header->mode != MODE_STATUS) &&
+       (packet.header->mode != MODE_SERVER) &&
+       (packet.header->mode != MODE_CLIENT))
+    {
+        return ERR_INVALIDMODE;
+    }
+    // check if function is known
+    if((packet.header->func != FNC_POLYNOME)  &&
+       (packet.header->func != FNC_DECRYPT)   &&
+       (packet.header->func != FNC_UNLOCK)    &&
+       (packet.header->func != FNC_BROADCAST) &&
+       (packet.header->func != FNC_STATUS))
+    {
+        return ERR_NOSUCHFUNCTION;
+    }
+    // check if type is valid
+    if((packet.header->type != MSG_REQUEST)  &&
+       (packet.header->type != MSG_RESPONSE) &&
+       (packet.header->type != MSG_ERROR))
+    {
+        return ERR_INVALIDTYPE;
+    }
+    // TODO check if Header is consistent
+    // TODO check data field
+    return NO_ERROR;
 }
