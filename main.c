@@ -58,9 +58,15 @@
     // "read" the data
     
     // Allocate header memory
+<<<<<<< HEAD
     //my_msg.head = malloc(sizeof(msg_header));
     // Copy header data
     //memcpy(my_msg.head, msg_send, HEADER_LENGTH);
+=======
+    my_msg.header = malloc(sizeof(msg_header));
+    // Copy header data
+    memcpy(my_msg.header, msg_send, HEADER_LENGTH);
+>>>>>>> devel
     
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));

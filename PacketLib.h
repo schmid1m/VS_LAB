@@ -5,17 +5,15 @@
 **                Simon Lauser                               **
 **                Michel Schmidt (schmid1m@hs-pforzheim.de)  **
 **  Created     : 19.04.2016                                 **
-**  Last change : 19.04.2016                                 **
+**  Last change : 25.04.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 #ifndef PACKET_LIB_H
 #define PACKET_LIB_H
+#include <stdint.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
-#define ERROR -1
-#define SUCCESS 1
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
@@ -96,12 +94,28 @@ typedef struct dat_status_response
 /// 
 typedef struct error
 {
-	uint8_t errCode;						///< The error code of the occurring error @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
+    uint8_t errCode;						///< The error code of the occurring error @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
 	uint16_t blockID:14;					///< Block ID where the error occurred (for ERR_DECRYPT and ERR_SERVERINUSE). Else 0.
 	uint16_t reserved:10;					///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) error;
 
 /// FUNCTION PROTOTYPES ///
+<<<<<<< HEAD
 int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
+=======
+
+
+/// @brief Send a response to a broadcast from a client
+/// @param[in] socketdesc : socket descriptor of the socket that should be used
+/// @param[in] serverSocket : pointer to the server socket struct
+/// @param[in] clientAddress : pointer to the client socket struct
+/// \return ERROR if sending message isn't successful otherwise you'll get SUCCESS
+int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
+
+/// \brief Check a packet for internal errors
+/// \param[in] packet : The packet structure
+/// \return The error code that occurred @sa NO_ERROR @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
+int check_packet(msg packet);
+>>>>>>> devel
 
 #endif // PACKET_LIB_H
