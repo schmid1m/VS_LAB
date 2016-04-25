@@ -1,0 +1,23 @@
+% -- Cloning (git einrichten) -- %
+git clone https://github.com/schmid1m/VS_LAB.git
+
+% -- Branch wechseln zu devel-- %
+git checkout devel
+
+% -- Status des Repositories abfragen --
+git status
+
+% -- Pulling (aktuellen status kopieren) -- %
+git pull
+
+% -- Geänderte Dateien bereitstellen -- %
+git add <filename>
+git add --all (= alle bereitstellen)
+
+% -- Bereitgestellte Änderungen eintragen -- %
+git commit
+<commit msg schreiben>
+(bestätigen bei VI basiertem editor z.B. in windoof) 'ESC' + ':' + 'x'
+
+% -- Pushing (lokalen stand hochladen) -- %
+git push origin HEAD:devel

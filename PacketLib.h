@@ -1,19 +1,15 @@
 /**************************************************************
 **  File        : PacketLib.h                                **
-**  Version     : 2.3                                        **
-**  Author      : Philipp Duller                             **
-**                Simon Lauser                               **
-**                Michel Schmidt (schmid1m@hs-pforzheim.de)  **
+**  Version     : 2.4                                        **
 **  Created     : 19.04.2016                                 **
 **  Last change : 25.04.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
+
 #ifndef PACKET_LIB_H
 #define PACKET_LIB_H
+
 #include <stdint.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
@@ -28,14 +24,6 @@ typedef struct msg_header
 	uint16_t length;						///< The Length of the message data field
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) msg_header;
-
-/// @brief Structure for a message
-/// This structure holds pointers for the message header and the data structure
-typedef struct msg
-{
-    msg_header* header;						///< A pointer to the header of the structure. @sa msg_header
-    void* data;								///< A pounter to the data field of the structure. Nullpointer for no data field. @sa dat_polynom_request @sa dat_decrypt_request @sa dat_decrypt_response @sa dat_unlock_request @sa dat_broadcast_response @sa dat_status_response @sa error
-} msg;
 
 /// @brief Set polynome request
 /// This function tries to set the polynome if the server is free or the current client has lower priority
@@ -96,59 +84,28 @@ typedef struct error
     uint16_t blockID;   					///< Block ID where the error occurred (for ERR_DECRYPT and ERR_SERVERINUSE). Else 0.
 }__attribute__((__packed__)) error;
 
+/// @brief Structure for a message
+/// This structure holds pointers for the message header and the data structure
+typedef struct msg
+{
+    msg_header* header;						///< A pointer to the header of the structure. @sa msg_header
+    void* data;								///< A pounter to the data field of the structure. Nullpointer for no data field. @sa dat_polynom_request @sa dat_decrypt_request @sa dat_decrypt_response @sa dat_unlock_request @sa dat_broadcast_response @sa dat_status_response @sa error
+}__attribute__((__packed__)) msg;
+
 /// FUNCTION PROTOTYPES ///
-
-int init_pack_lib(/* cID, socket, prio, ip, cl/sr, testserver ip */);
-int init_client(/*Client ID,Prio,socket*/);
-int init_server(/*socket, Server IP, testserver IP*/);
-
-
-
-//int msg_send(msg* msg);
-//int msg_send_bin(uint8_t fnc_id, uint8_t* data, uint32_t data_len, uint32_t target_ip);
-
-uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip);
-uint8_t send_gp_rsp(uint32_t target_client_ip);
-
-uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip);
-uint8_t send_dec_rsp(uint16_t BID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip);
-
-uint8_t send_unlock_req(uint32_t target_server_ip);
-uint8_t send_unlock_rsp(uint32_t target_client_ip);
-
-uint8_t send_brdcst_req();
-uint8_t send_brdcst_rsp(uint32_t target_client_ip);
-
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number);
-
-uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client_ip, FID fid);
-
-uint8_t send_msg(msg* packet);
-
-uint8_t recv_msg(msg* packet);
-FID get_msg_type(msg* packet);
-
-// überall ip
-uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio);
-uint8_t extract_gp_rsp(msg* packet);
-
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t* data, uint32_t* data_len);
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len);
-
-uint8_t extract_unlock_req(msg* packet, uint16_t* CID);
-uint8_t extract_unlock_rsp(msg* packet);
-
-uint8_t extract_brdcst_req(msg* packet, uint32_t* src_client_ip);
-uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip);
-
-uint8_t extract_status_req(msg* packet);
-
-uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
 
 /// \brief Check a packet for internal errors
 /// \param[in] packet : The packet structure
 /// \return The error code that occurred @sa NO_ERROR @sa ERR_PACKETLENGTH @sa ERR_INVALIDVERSION @sa ERR_INVALIDMODE @sa ERR_NOSUCHFUNCTION @sa ERR_INVALIDTYPE @sa ERR_DATA @sa ERR_SERVERINUSE @sa ERR_FUNCTIONTIMEOUT @sa ERR_FUNCTIONEXEC @sa ERR_DECRYPT @sa ERR_ALLOC @sa ERR_UNKNOWN
-int check_packet(msg packet);
+uint8_t check_packet(msg* packet);
+
+uint8_t send_msg(msg* packet);
+
+/*********************************/
+/* OLD FUNCTIONS.... TO BE MOVED */
+/*********************************/
+
+/*
 /// @brief Send a response to a broadcast from a client
 /// @param[in] socketdesc : socket descriptor of the socket that should be used
 /// @param[in] serverSocket : pointer to the server socket struct
@@ -157,5 +114,10 @@ int check_packet(msg packet);
 int server_broadcast_rsp(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
 
 
-int server_status_rsp(int socketdesc, struct sockaddr_in *statusAddress, ...);
+int server_status_rsp(int socketdesc, struct sockaddr_in *statusAddress, ...);*/
+
+/*********************************/
+/* OLD FUNCTIONS.... TO BE MOVED */
+/*********************************/
+
 #endif // PACKET_LIB_H

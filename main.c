@@ -1,3 +1,11 @@
+/**************************************************************
+**  File        : main.c                                     **
+**  Version     : 2.4                                        **
+**  Created     : 19.04.2016                                 **
+**  Last change : 25.04.2016                                 **
+**  Project     : Verteilte Systeme Labor                    **
+**************************************************************/
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -5,8 +13,9 @@
 
 #include "Macros.h"
 #include "PacketLib.h"
+#include "internalMacros.h"
 
-/*int main(){
+int main(){
     // Arbitrary file Input (Data and length)
     uint16_t input[] = { 0xFD32, 0x8CAC, 0x6905, 0x4329 };
     uint32_t length = 8;
@@ -58,15 +67,9 @@
     // "read" the data
     
     // Allocate header memory
-<<<<<<< HEAD
-    //my_msg.head = malloc(sizeof(msg_header));
-    // Copy header data
-    //memcpy(my_msg.head, msg_send, HEADER_LENGTH);
-=======
     my_msg.header = malloc(sizeof(msg_header));
     // Copy header data
     memcpy(my_msg.header, msg_send, HEADER_LENGTH);
->>>>>>> devel
     
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));
@@ -87,4 +90,4 @@
     
     // End Program
     return 0;
-}*/
+}

@@ -1,12 +1,22 @@
+/**************************************************************
+**  File        : PacketLib.c                                **
+**  Version     : 2.4                                        **
+**  Created     : 21.04.2016                                 **
+**  Last change : 25.04.2016                                 **
+**  Project     : Verteilte Systeme Labor                    **
+**************************************************************/
+
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 //#include <arpa/inet.h>
 #include "PacketLib.h"
 #include "Macros.h"
-#include "stdlib.h"
+#include "internalMacros.h"
 
 int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
 	msg_header *msgHeader = malloc(sizeof(msg_header)+sizeof(dat_broadcast_response));		// storage for the complete response
@@ -61,38 +71,38 @@ int get_mode(void *data){
 }
 
 
-int check_packet(msg packet)
+uint8_t check_packet(msg* packet)
 {
     // check packet length
-    if(packet.header->length > MAX_PACKET_LENGTH)
+    if(packet->header->length > MAX_PACKET_LENGTH)
     {
         return ERR_PACKETLENGTH;
     }
     // check protocol version
-    if(packet.header->version != PROTOCOL_VERSION)
+    if(packet->header->version != PROTOCOL_VERSION)
     {
         return ERR_INVALIDVERSION;
     }
     // check if mode is valid
-    if((packet.header->mode != MODE_STATUS) &&
-       (packet.header->mode != MODE_SERVER) &&
-       (packet.header->mode != MODE_CLIENT))
+    if((packet->header->mode != MODE_STATUS) &&
+       (packet->header->mode != MODE_SERVER) &&
+       (packet->header->mode != MODE_CLIENT))
     {
         return ERR_INVALIDMODE;
     }
     // check if function is known
-    if((packet.header->func != FNC_POLYNOME)  &&
-       (packet.header->func != FNC_DECRYPT)   &&
-       (packet.header->func != FNC_UNLOCK)    &&
-       (packet.header->func != FNC_BROADCAST) &&
-       (packet.header->func != FNC_STATUS))
+    if((packet->header->func != FNC_POLYNOME)  &&
+       (packet->header->func != FNC_DECRYPT)   &&
+       (packet->header->func != FNC_UNLOCK)    &&
+       (packet->header->func != FNC_BROADCAST) &&
+       (packet->header->func != FNC_STATUS))
     {
         return ERR_NOSUCHFUNCTION;
     }
     // check if type is valid
-    if((packet.header->type != MSG_REQUEST)  &&
-       (packet.header->type != MSG_RESPONSE) &&
-       (packet.header->type != MSG_ERROR))
+    if((packet->header->type != MSG_REQUEST)  &&
+       (packet->header->type != MSG_RESPONSE) &&
+       (packet->header->type != MSG_ERROR))
     {
         return ERR_INVALIDTYPE;
     }
