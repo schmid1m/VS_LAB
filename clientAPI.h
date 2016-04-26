@@ -43,7 +43,7 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 
 /// \brief Send an unlock request
 /// Unlock a connected server
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] target_server_ip : the IP address of the target server
 /// \return The error code that occurred.
 /// @sa macros

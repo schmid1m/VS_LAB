@@ -267,7 +267,7 @@ FID get_msg_type(msg* packet)
     return UNKNOWN;
 }
 
-uint8_t send_msg(msg* packet)
+uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-
+	return SUCCESS;
 }
