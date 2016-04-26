@@ -21,10 +21,11 @@
 /// It also does a syntax check on the message to find badly generated packets.
 /// @author <Author Name Here>
 /// \param[out] packet : The received packet
+/// \param[out] src_ip : Source-IP-Address
 /// \return The error code of the message. ERR_NO_PACKET if there is no message.
 /// @sa msg
 /// @sa macros
-uint8_t recv_msg(msg* packet);
+uint8_t recv_msg(msg* packet, uint32_t* src_ip);
 
 /// \brief get_msg_type
 /// This function returns the type of the current message.

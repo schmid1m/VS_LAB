@@ -11,15 +11,17 @@
 #include "clientAPI.h"
 #include <stdlib.h>
 
-static int16_t clientID;
-static uint8_t prio;
-static uint32_t broadcastAddress;
+static int16_t clientID 		 = -1;
+static uint8_t prio 			 = 255;
+static uint32_t broadcastAddress = 0;
+static uint8_t initialized 		 = 0;
 
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
 	clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
+	initialized = 1; // true
 
 	return SUCCESS;
 }
@@ -28,6 +30,8 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 {
 	msg temp_msg;
 	uint8_t error_code;
+
+	if(!initialized) return ERR_NO_INIT;
 
 	temp_msg.header = malloc(sizeof(msg_header));
 	temp_msg.data = malloc(sizeof(dat_gp_request));
@@ -61,6 +65,8 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 {
 	msg tmp_msg;
 	uint8_t error_code;
+
+	if(!initialized) return ERR_NO_INIT;
 
 	tmp_msg.header = malloc(sizeof(msg_header));
 
@@ -100,6 +106,8 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 	msg tmp;
 	uint8_t retVal;
 
+	if(!initialized) return ERR_NO_INIT;
+
 	// Allocate memory
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
     tmp.data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
@@ -135,6 +143,8 @@ uint8_t send_brdcst_req()
 	msg tmp;
 	uint8_t retVal;
 
+	if(!initialized) return ERR_NO_INIT;
+
 	// Allocate memory
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
 
@@ -161,11 +171,15 @@ uint8_t send_brdcst_req()
 
 uint8_t extract_gp_rsp(msg* packet)
 {
+	if(!initialized) return ERR_NO_INIT;
+
 	return NO_ERROR;	/* Nothing to extract here */
 }
 
 uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len)
 {
+	if(!initialized) return ERR_NO_INIT;
+
 	if(((dat_decrypt_response*)packet.data)->clientID != clientID) return ERR_NOTFORME;
 
 	*BID = ((dat_decrypt_response*)packet.data)->blockID;
@@ -180,16 +194,22 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
 
 uint8_t extract_unlock_rsp(msg* packet)
 {
+	if(!initialized) return ERR_NO_INIT;
+
 	return NO_ERROR;	/* Nothing to extract here */
 }
 
 uint8_t extract_brdcst_rsp(msg* packet)
 {
+	if(!initialized) return ERR_NO_INIT;
+
 	return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
 {
+	if(!initialized) return ERR_NO_INIT;
+
 	*error_code = ((error*)packet.data)->errCode;
 	*BID = ((error*)packet.data)->blockID;
 
