@@ -58,7 +58,6 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 	uint8_t error_code;
 
 	tmp_msg.header = malloc(sizeof(msg_header));
-	tmp_msg.data = malloc(sizeof(dat_decrypt_request)+((data_len-1)*sizeof(uint16_t)));
 
 	tmp_msg.header->func = FNC_DECRYPT;
 	tmp_msg.header->length = sizeof(dat_decrypt_request)+((data_len-1)*sizeof(uint16_t));
