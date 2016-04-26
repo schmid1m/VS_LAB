@@ -96,7 +96,7 @@ uint8_t check_packet(msg* packet)
         return ERR_INVALIDMODE;
     }
     // check if function is known
-    if((packet->header->func != FNC_POLYNOME)  &&
+    if((packet->header->func != FNC_GP)  &&
        (packet->header->func != FNC_DECRYPT)   &&
        (packet->header->func != FNC_UNLOCK)    &&
        (packet->header->func != FNC_BROADCAST) &&
@@ -121,7 +121,7 @@ uint8_t check_packet(msg* packet)
     // Check length
     switch(msg_type)
     {
-        case POLYNOME_RSP:
+        case GP_RSP:
         case UNLOCK_RSP:
         case BROADCAST_REQ:
         case STATUS_REQ:
@@ -130,7 +130,7 @@ uint8_t check_packet(msg* packet)
                 return ERR_PACKETLENGTH;
             }
             break;
-        case POLYNOME_REQ:
+        case GP_REQ:
         case BROADCAST_RSP:
             if(packet->header->length != 4)
             {
@@ -209,15 +209,15 @@ FID get_msg_type(msg* packet)
     {
         return ERROR_RSP;
     }
-    else if(packet->header->func == FNC_POLYNOME)
+    else if(packet->header->func == FNC_GP)
     {
         if(packet->header->type == MSG_REQUEST)
         {
-            return POLYNOME_REQ;
+            return GP_REQ;
         }
         else
         {
-            return POLYNOME_RSP;
+            return GP_RSP;
         }
     }
     else if(packet->header->func == FNC_DECRYPT)

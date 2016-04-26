@@ -22,7 +22,7 @@ int init_server(/*socket, Server IP, testserver IP*/);
 
 /// \brief Send a generator polynome response
 /// Confirm the successfull setting of the generator polynome
-/// @author <Author Name Here>
+/// @author Simon Lauser
 /// \param[in] target_client_ip : the IP address of the target client
 /// \return The error code that occurred.
 /// @sa macros
@@ -30,7 +30,7 @@ uint8_t send_gp_rsp(uint32_t target_client_ip);
 
 /// \brief Send the decrypted data
 /// Return the decrypted data to the client
-/// @author <Author Name Here>
+/// @author Simon Lauser
 /// \param[in] BID : The Block ID of this Block
 /// \param[in] data : The data to send
 /// \param[in] data_len : The length of the data field
