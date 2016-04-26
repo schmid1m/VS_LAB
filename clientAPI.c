@@ -15,12 +15,11 @@ static int16_t prio;
 
 int init_client(/*Client ID,Prio,socket*/)
 {
-
+	return SUCCESS;
 }
 
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 {
-
 	msg temp_msg;
 	uint8_t error_code;
 
@@ -54,40 +53,69 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 
 uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
 {
-
+	return SUCCESS;
 }
 
 uint8_t send_unlock_req(uint32_t target_server_ip)
 {
+	uint8_t retVal;
 
+	// Allocate memory
+	msg tmp;
+	tmp->header = (msg_header*) malloc(sizeof(msg_header));
+	tmp->data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
+
+	// Fill header
+	tmp->header->priority = prio;
+	tmp->header->version = PROTOCOL_VERSION;
+	tmp->header->mode = MODE_CLIENT;
+	tmp->header->func = FNC_UNLOCK;
+	tmp->header->type = MSG_REQUEST;
+	tmp->header->length = sizeof(dat_unlock_request);
+
+	// Fill datafield
+	((dat_unlock_request*)tmp->data)->clientID = (int16_t)myID;
+
+	// Check message
+	retVal = check_packet(tmp);
+	if(retVal != NO_ERROR) return retVal;
+
+	// Send out message
+	retVal = send_msg(tmp,target_server_ip);
+
+	// Free memory
+	free(tmp->header);
+	free(tmp->data);
+
+	return retVal;
 }
 
 uint8_t send_brdcst_req()
 {
-
+	return SUCCESS;
 }
 
 uint8_t extract_gp_rsp(msg* packet, uint32_t* src_server_ip)
 {
-
+	return SUCCESS;
 }
 
 uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, uint32_t* src_server_ip)
 {
-
+	return SUCCESS;
 }
 
 uint8_t extract_unlock_rsp(msg* packet, uint32_t* src_client_ip)
 {
-
+	return SUCCESS;
 }
 
 uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip)
 {
-
+	return SUCCESS;
 }
 
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID, uint32_t* src_server_ip)
 {
-
+	return SUCCESS;
 }
