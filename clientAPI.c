@@ -130,25 +130,25 @@ uint8_t send_brdcst_req()
 	uint8_t retVal;
 
 	// Allocate memory
-	tmp->header = (msg_header*) malloc(sizeof(msg_header));
+    tmp.header = (msg_header*) malloc(sizeof(msg_header));
 
 	// Fill header
-	tmp->header->priority = prio;
-	tmp->header->version = PROTOCOL_VERSION;
-	tmp->header->mode = MODE_CLIENT;
-	tmp->header->func = FNC_BROADCAST;
-	tmp->header->type = MSG_REQUEST;
-	tmp->header->length = 0;
+    tmp.header->priority = prio;
+    tmp.header->version = PROTOCOL_VERSION;
+    tmp.header->mode = MODE_CLIENT;
+    tmp.header->func = FNC_BROADCAST;
+    tmp.header->type = MSG_REQUEST;
+    tmp.header->length = 0;
 
 	// Check message
-	retVal = check_packet(tmp);
+    retVal = check_packet(&tmp);
 	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
-	retVal = send_msg(tmp,broadcastAddress);
+    retVal = send_msg(&tmp,broadcastAddress);
 
 	// Free memory
-	free(tmp->header);
+    free(tmp.header);
 
 	return retVal;
 }
@@ -158,7 +158,7 @@ uint8_t extract_gp_rsp(msg* packet)
 	return NO_ERROR;	/* Nothing to extract here */
 }
 
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, int16_t p_clientID)
+uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len)
 {
 	if(p_clientID != clientID) return ERR_UNKNOWN; // !!! Specific error required !!!
 
@@ -169,17 +169,17 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* dat
 	return NO_ERROR;
 }
 
-uint8_t extract_unlock_rsp(msg* packet, uint32_t* src_client_ip)
+uint8_t extract_unlock_rsp(msg* packet)
 {
 	return SUCCESS;
 }
 
-uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip)
+uint8_t extract_brdcst_rsp(msg* packet)
 {
 	return SUCCESS;
 }
 
-uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID, uint32_t* src_server_ip)
+uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
 {
 	return SUCCESS;
 }

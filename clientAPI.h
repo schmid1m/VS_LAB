@@ -91,7 +91,7 @@ uint8_t extract_unlock_rsp(msg* packet);
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip);
+uint8_t extract_brdcst_rsp(msg* packet);
 
 /// \brief Extract an error message
 /// Extract an error message from a server
@@ -102,7 +102,7 @@ uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip);
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID, uint32_t* src_server_ip);
+uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
 
 /// @}
 #endif // VSLAB_CLIENT_API_H

@@ -32,12 +32,13 @@ uint8_t send_gp_rsp(uint32_t target_client_ip);
 /// Return the decrypted data to the client
 /// @author Simon Lauser
 /// \param[in] BID : The Block ID of this Block
+/// \param[in] clientID : The Client ID of the requesting client
 /// \param[in] data : The data to send
 /// \param[in] data_len : The length of the data field
 /// \param[in] target_client_ip : the IP address of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_dec_rsp(uint16_t BID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip);
+uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip);
 
 /// \brief Send the unlock confirmation
 /// @author <Author Name Here>

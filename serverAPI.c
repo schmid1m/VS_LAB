@@ -45,7 +45,7 @@ uint8_t send_gp_rsp(uint32_t target_client_ip)
 	return error_code;
 }
 
-uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint32_t target_client_ip, uint8_t* data, uint32_t data_len)
+uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip)
 {
 	msg tmp_msg;
 	uint8_t error_code;
