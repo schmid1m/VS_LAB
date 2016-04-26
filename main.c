@@ -61,7 +61,7 @@ int main(){
 
 	// Print a copy of the sent data
     printf("%x\n", *(uint32_t*)((void*)msg_send));
-    printf("%x\n", *(uint32_t*)((void*)msg_send + 4));
+    printf("%x\n", *(uint32_t*)((void*)msg_send + sizeof(uint32_t)));
     printf("%x\n\n\n\a", *(uint32_t*)((void*)msg_send + HEADER_LENGTH));
     
     // "read" the data
