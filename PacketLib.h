@@ -64,13 +64,6 @@ typedef struct dat_unlock_request
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) dat_unlock_request;
 
-/// @brief Broadcast response
-/// Each server responds to a broadcast sending its IP address
-typedef struct dat_broadcast_response
-{
-    uint32_t serverIP;      				///< 4 times 1 Byte IP V4 address
-}__attribute__((__packed__)) dat_broadcast_response;
-
 /// @brief Response to a status request
 /// Servers respond with their current status
 typedef struct dat_status_response

@@ -198,9 +198,15 @@ uint8_t check_packet(msg* packet)
     return NO_ERROR;
 }
 
-uint8_t recv_msg(msg* packet)
+uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
+	/* socket-function recv(...);
+	 * packet->header = malloc(...);
+	 * packet->header->_____ = ______;
+	 * packet->data = malloc("abhängig von packettype aus header")
+	 * *src_ip = "aus socket-funktion"; */
 
+	return check_packet(packet);
 }
 
 FID get_msg_type(msg* packet)
@@ -269,5 +275,7 @@ FID get_msg_type(msg* packet)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
+	/* socket-function sendto(...) */
+
 	return SUCCESS;
 }

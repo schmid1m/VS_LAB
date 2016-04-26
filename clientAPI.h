@@ -17,7 +17,7 @@
 /// @{
 
 /// \brief Initiates the lib with the permanent client data
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \return Error code planed as return value
 int init_client(/*Client ID,Prio,socket*/);
 
@@ -74,11 +74,11 @@ uint8_t extract_gp_rsp(msg* packet);
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len);
+uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len);
 
 /// \brief Extracts the unlock confirmation
 /// This extracts the unlock confirmation
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] packet : the packet to extract
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
@@ -86,23 +86,23 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* dat
 uint8_t extract_unlock_rsp(msg* packet);
 
 /// \brief This extracts broadcast response
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] packet : the packet to extract
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip);
+uint8_t extract_brdcst_rsp(msg* packet);
 
 /// \brief Extract an error message
 /// Extract an error message from a server
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] packet : the packet to extract
 /// \param[out] error_code : The error code that occurred
 /// \param[out] BID : the block ID of the decrypted packet (if present)
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID, uint32_t* src_server_ip);
+uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
 
 /// @}
 #endif // VSLAB_CLIENT_API_H

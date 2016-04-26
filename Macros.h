@@ -26,6 +26,7 @@
 #define ERR_FUNCTIONEXEC             33 ///< An error executing this function was detected
 #define ERR_DECRYPT                  64 ///< The data could not be decrypted due to an error
 #define ERR_ALLOC                   128 ///< Not enough free space to allocate data
+#define ERR_NOTFORME                129 ///< Client detected client ID miss match
 #define ERR_NO_INIT                 253 ///< The API lib was not initialized
 #define ERR_NO_PACKET               254 ///< No Packet was on the socket
 #define ERR_UNKNOWN                 255 ///< An error occurred that does not match any of the other ones (this should never happen)

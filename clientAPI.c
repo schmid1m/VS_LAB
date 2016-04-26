@@ -15,8 +15,12 @@ static int16_t clientID;
 static uint8_t prio;
 static uint32_t broadcastAddress;
 
-int init_client(/*Client ID,Prio,socket*/)
+int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
+	clientID = p_cID;
+	prio = p_prio;
+	broadcastAddress = p_bca;
+
 	return SUCCESS;
 }
 
@@ -96,6 +100,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 	msg tmp;
 	uint8_t retVal;
 
+	// Allocate memory
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
     tmp.data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
 
@@ -106,6 +111,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
     tmp.header->func = FNC_UNLOCK;
     tmp.header->type = MSG_REQUEST;
     tmp.header->length = sizeof(dat_unlock_request);
+    tmp.header->reserved = VALUE_RESERVED;
 
 	// Fill datafield
     ((dat_unlock_request*)tmp.data)->clientID = (int16_t)clientID;
@@ -130,25 +136,25 @@ uint8_t send_brdcst_req()
 	uint8_t retVal;
 
 	// Allocate memory
-	tmp->header = (msg_header*) malloc(sizeof(msg_header));
+	tmp.header = (msg_header*) malloc(sizeof(msg_header));
 
 	// Fill header
-	tmp->header->priority = prio;
-	tmp->header->version = PROTOCOL_VERSION;
-	tmp->header->mode = MODE_CLIENT;
-	tmp->header->func = FNC_BROADCAST;
-	tmp->header->type = MSG_REQUEST;
-	tmp->header->length = 0;
+	tmp.header->priority = prio;
+	tmp.header->version = PROTOCOL_VERSION;
+	tmp.header->mode = MODE_CLIENT;
+	tmp.header->func = FNC_BROADCAST;
+	tmp.header->type = MSG_REQUEST;
+	tmp.header->length = 0;
 
 	// Check message
-	retVal = check_packet(tmp);
+	retVal = check_packet(&tmp);
 	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
-	retVal = send_msg(tmp,broadcastAddress);
+	retVal = send_msg(&tmp,broadcastAddress);
 
 	// Free memory
-	free(tmp->header);
+	free(tmp.header);
 
 	return retVal;
 }
@@ -158,28 +164,34 @@ uint8_t extract_gp_rsp(msg* packet)
 	return NO_ERROR;	/* Nothing to extract here */
 }
 
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, int16_t p_clientID)
+uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len)
 {
-	if(p_clientID != clientID) return ERR_UNKNOWN; // !!! Specific error required !!!
+	if(((dat_decrypt_response*)packet.data)->clientID != clientID) return ERR_NOTFORME;
 
-	*BID = ((dat_decrypt_response*)packet->data)->blockID;
-	*data_len = packet->header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
-	memcpy(data,&((dat_decrypt_response*)packet->data)->firstElement,*data_len);
+	*BID = ((dat_decrypt_response*)packet.data)->blockID;
+	*data_len = packet.header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
+
+	// Copy ASCII-Chars
+	*data = (uint8_t*)malloc(sizeof(uint8_t * (*data_len)));
+	memcpy(*data,&((dat_decrypt_response*)packet.data)->firstElement,*data_len);
 
 	return NO_ERROR;
 }
 
-uint8_t extract_unlock_rsp(msg* packet, uint32_t* src_client_ip)
+uint8_t extract_unlock_rsp(msg* packet)
 {
-	return SUCCESS;
+	return NO_ERROR;	/* Nothing to extract here */
 }
 
-uint8_t extract_brdcst_rsp(msg* packet, uint32_t* src_server_ip)
+uint8_t extract_brdcst_rsp(msg* packet)
 {
-	return SUCCESS;
+	return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
-uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID, uint32_t* src_server_ip)
+uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
 {
-	return SUCCESS;
+	*error_code = ((error*)packet.data)->errCode;
+	*BID = ((error*)packet.data)->blockID;
+
+	return NO_ERROR;
 }
