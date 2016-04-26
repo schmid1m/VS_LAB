@@ -47,7 +47,8 @@ typedef enum{
     BROADCAST_RSP,                      ///< Function : broadcast; Type : Response
     STATUS_REQ,                         ///< Function : status check; Type : Request
     STATUS_RSP,                         ///< Function : status check; Type : Response
-    ERROR_RSP                           ///< Function : any; Type : Error
+    ERROR_RSP,                          ///< Function : any; Type : Error
+    UNKNOWN                             ///< Unknown function. This should not happen.
 }FID;
 
 /// @}

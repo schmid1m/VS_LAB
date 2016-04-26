@@ -76,6 +76,8 @@ int get_mode(void *data){
 
 uint8_t check_packet(msg* packet)
 {
+    FID msg_type;
+    // ---- check header fields on their own ----
     // check packet length
     if(packet->header->length > MAX_PACKET_LENGTH)
     {
@@ -109,7 +111,11 @@ uint8_t check_packet(msg* packet)
     {
         return ERR_INVALIDTYPE;
     }
-    // TODO check if Header is consistent
+    // ---- Header is consistent ----
+    msg_type = get_msg_type(packet);
+    // Check length
+        switch(msg_type)
+    // ---- Check data field ----
     // TODO check data field
     return NO_ERROR;
 }
@@ -121,7 +127,66 @@ uint8_t recv_msg(msg* packet)
 
 FID get_msg_type(msg* packet)
 {
-
+    if (packet->header->type == MSG_ERROR)
+    {
+        return ERROR_RSP;
+    }
+    else if(packet->header->func == FNC_POLYNOME)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return POLYNOME_REQ;
+        }
+        else
+        {
+            return POLYNOME_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_DECRYPT)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return DECRYPT_REQ;
+        }
+        else
+        {
+            return DECRYPT_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_UNLOCK)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return UNLOCK_REQ;
+        }
+        else
+        {
+            return UNLOCK_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_BROADCAST)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return BROADCAST_REQ;
+        }
+        else
+        {
+            return BROADCAST_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_STATUS)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return STATUS_REQ;
+        }
+        else
+        {
+            return STATUS_RSP;
+        }
+    }
+    return UNKNOWN;
 }
 
 uint8_t send_msg(msg* packet)
