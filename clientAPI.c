@@ -9,6 +9,7 @@
 #include "internalMacros.h"
 #include "commonAPI.h"
 #include "clientAPI.h"
+#include <stdlib.h>
 
 static int16_t clientID;
 static int16_t prio;
@@ -38,14 +39,14 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 	((dat_gp_request*)temp_msg.data)->generator = gp;
 
 	//check packet before sending
-	error_code = check_packet(temp_msg);
+    error_code = check_packet(&temp_msg);
 
 	if(error_code != NO_ERROR)
 	{
 		return error_code;
 	}
 
-	error_code = send_msg(temp_msg,target_server_ip);
+    error_code = send_msg(&temp_msg,target_server_ip);
 	free(temp_msg.header);
 	free(temp_msg.data);
 	return error_code;
@@ -72,18 +73,18 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 	tmp_data->blockID= BID;
 	tmp_data->clientID = clientID;
 
-	for (int var = 0; var < data_len; var++) {
-		&(tmp_data->firstElement)[var]=data[var];
+    for (uint32_t var = 0; var < data_len; var++) {
+        (&(tmp_data->firstElement))[var]=data[var];
 	}
 
 	//check packet before sending
-	error_code = check_packet(tmp_msg);
+    error_code = check_packet(&tmp_msg);
 	if(error_code != NO_ERROR)
 	{
 		return error_code;
 	}
 
-	error_code = send_msg(tmp_msg,target_server_ip);
+    error_code = send_msg(&tmp_msg,target_server_ip);
 	free(tmp_msg.header);
 	free(tmp_msg.data);
 	return error_code;
@@ -96,30 +97,30 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 
 	// Allocate memory
 	msg tmp;
-	tmp->header = (msg_header*) malloc(sizeof(msg_header));
-	tmp->data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
+    tmp.header = (msg_header*) malloc(sizeof(msg_header));
+    tmp.data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
 
 	// Fill header
-	tmp->header->priority = prio;
-	tmp->header->version = PROTOCOL_VERSION;
-	tmp->header->mode = MODE_CLIENT;
-	tmp->header->func = FNC_UNLOCK;
-	tmp->header->type = MSG_REQUEST;
-	tmp->header->length = sizeof(dat_unlock_request);
+    tmp.header->priority = prio;
+    tmp.header->version = PROTOCOL_VERSION;
+    tmp.header->mode = MODE_CLIENT;
+    tmp.header->func = FNC_UNLOCK;
+    tmp.header->type = MSG_REQUEST;
+    tmp.header->length = sizeof(dat_unlock_request);
 
 	// Fill datafield
-	((dat_unlock_request*)tmp->data)->clientID = (int16_t)myID;
+    ((dat_unlock_request*)tmp.data)->clientID = (int16_t)clientID;
 
 	// Check message
-	retVal = check_packet(tmp);
+    retVal = check_packet(&tmp);
 	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
-	retVal = send_msg(tmp,target_server_ip);
+    retVal = send_msg(&tmp,target_server_ip);
 
 	// Free memory
-	free(tmp->header);
-	free(tmp->data);
+    free(tmp.header);
+    free(tmp.data);
 
 	return retVal;
 }

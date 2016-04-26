@@ -14,6 +14,7 @@
 #include "Macros.h"
 #include "PacketLib.h"
 #include "internalMacros.h"
+#include "commonAPI.h"
 
 int main(){
     // Arbitrary file Input (Data and length)
@@ -29,15 +30,15 @@ int main(){
     // Alloc Header
     my_msg.header = malloc(sizeof(msg_header));
     // Alloc Data
-    my_msg.data = (void*)malloc(sizeof(dat_polynom_request));
+    my_msg.data = (void*)malloc(sizeof(dat_gp_request));
     // Convert my_msg.data to its real datatype
-    dat_polynom_request* data = (dat_polynom_request*)my_msg.data;
+    dat_gp_request* data = (dat_gp_request*)my_msg.data;
     
     // Fill header with data
     my_msg.header->priority= 0x61;
     my_msg.header->version = 14;
     my_msg.header->mode = MODE_CLIENT;
-    my_msg.header->func = FNC_POLYNOME;
+    my_msg.header->func = FNC_GP;
     my_msg.header->type = MSG_REQUEST;
     my_msg.header->length = 4;
     my_msg.header->reserved = VALUE_RESERVED;
@@ -85,8 +86,8 @@ int main(){
     printf("header: %x\n\n", my_msg.header->length);
     
     // Print received Data
-    printf("data: %d\n", ((dat_polynom_request*)my_msg.data)->clientID);
-    printf("data: %x\n\n", ((dat_polynom_request*)my_msg.data)->generator);
+    printf("data: %d\n", ((dat_gp_request*)my_msg.data)->clientID);
+    printf("data: %x\n\n", ((dat_gp_request*)my_msg.data)->generator);
     
     // End Program
     return 0;
