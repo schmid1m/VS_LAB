@@ -50,23 +50,23 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 uint8_t send_unlock_req(uint32_t target_server_ip);
 
 /// \brief Send a broadcast request
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t send_brdcst_req();
 
 /// \brief Extract a generator polynome response
 /// Extract the data from the polynome extract response
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] packet : the packet to extract
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_gp_rsp(msg* packet, uint32_t* src_server_ip);
+uint8_t extract_gp_rsp(msg* packet);
 
 /// \brief Extract the decrypted data response
 /// This function extracts the decrypted data from the message
-/// @author <Author Name Here>
+/// @author Philipp Duller
 /// \param[in] packet : the packet to extract
 /// \param[out] BID : the block ID of the decrypted packet
 /// \param[out] data : the decrypted data
@@ -74,7 +74,7 @@ uint8_t extract_gp_rsp(msg* packet, uint32_t* src_server_ip);
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, uint32_t* src_server_ip);
+uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len);
 
 /// \brief Extracts the unlock confirmation
 /// This extracts the unlock confirmation
@@ -83,7 +83,7 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* dat
 /// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_unlock_rsp(msg* packet, uint32_t* src_client_ip);
+uint8_t extract_unlock_rsp(msg* packet);
 
 /// \brief This extracts broadcast response
 /// @author <Author Name Here>
