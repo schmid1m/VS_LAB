@@ -45,7 +45,7 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 		return error_code;
 	}
 
-	error_code = send_msg(temp_msg);
+	error_code = send_msg(temp_msg,target_server_ip);
 	free(temp_msg.header);
 	free(temp_msg.data);
 	return error_code;
@@ -83,7 +83,7 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 		return error_code;
 	}
 
-	error_code = send_msg(tmp_msg);
+	error_code = send_msg(tmp_msg,target_server_ip);
 	free(tmp_msg.header);
 	free(tmp_msg.data);
 	return error_code;
