@@ -22,7 +22,7 @@ int init_server(/*socket, Server IP, testserver IP*/);
 
 /// \brief Send a generator polynome response
 /// Confirm the successfull setting of the generator polynome
-/// @author <Author Name Here>
+/// @author Simon Lauser
 /// \param[in] target_client_ip : the IP address of the target client
 /// \return The error code that occurred.
 /// @sa macros
