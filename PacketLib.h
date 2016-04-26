@@ -31,11 +31,11 @@ typedef struct msg_header
 
 /// @brief Set polynome request
 /// This function tries to set the polynome if the server is free or the current client has lower priority
-typedef struct dat_polynom_request
+typedef struct dat_gp_request
 {
 	int16_t clientID;						///< The ID of the requesting client
 	uint16_t generator;						///< The generator polynome
-}__attribute__((__packed__)) dat_polynom_request;
+}__attribute__((__packed__)) dat_gp_request;
 
 /// @brief Decrypt data
 /// Request to decrypt data. Polynome has to be set first. @sa dat_polynom_request
@@ -63,13 +63,6 @@ typedef struct dat_unlock_request
 	int16_t clientID;						///< The ID of the current client
 	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) dat_unlock_request;
-
-/// @brief Broadcast response
-/// Each server responds to a broadcast sending its IP address
-typedef struct dat_broadcast_response
-{
-    uint32_t serverIP;      				///< 4 times 1 Byte IP V4 address
-}__attribute__((__packed__)) dat_broadcast_response;
 
 /// @brief Response to a status request
 /// Servers respond with their current status
@@ -116,7 +109,7 @@ uint8_t check_packet(msg* packet);
 /// \return The error code that occurred
 /// @sa msg
 /// @sa macros
-uint8_t send_msg(msg* packet);
+uint8_t send_msg(msg* packet, uint32_t target_ip);
 
 /// @}
 

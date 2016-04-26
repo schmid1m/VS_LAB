@@ -76,6 +76,8 @@ int get_mode(void *data){
 
 uint8_t check_packet(msg* packet)
 {
+    FID msg_type;
+    // ---- check header fields on their own ----
     // check packet length
     if(packet->header->length > MAX_PACKET_LENGTH)
     {
@@ -94,7 +96,7 @@ uint8_t check_packet(msg* packet)
         return ERR_INVALIDMODE;
     }
     // check if function is known
-    if((packet->header->func != FNC_POLYNOME)  &&
+    if((packet->header->func != FNC_GP)  &&
        (packet->header->func != FNC_DECRYPT)   &&
        (packet->header->func != FNC_UNLOCK)    &&
        (packet->header->func != FNC_BROADCAST) &&
@@ -109,22 +111,200 @@ uint8_t check_packet(msg* packet)
     {
         return ERR_INVALIDTYPE;
     }
-    // TODO check if Header is consistent
-    // TODO check data field
+    // ---- Header is consistent ----
+    msg_type = get_msg_type(packet);
+    // validate func ID
+    if(msg_type == UNKNOWN)
+    {
+        return ERR_HEADER_DATA;
+    }
+    // Check length
+    switch(msg_type)
+    {
+        case GP_RSP:
+        case UNLOCK_RSP:
+        case BROADCAST_REQ:
+        case BROADCAST_RSP:
+        case STATUS_REQ:
+            if(packet->header->length != 0)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case GP_REQ:
+            if(packet->header->length != 4)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case DECRYPT_REQ:
+            if((packet->header->length < 6) ||
+               ((packet->header->length % 2) != 1))
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case DECRYPT_RSP:
+            if(packet->header->length < 5)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case UNLOCK_REQ:
+            if(packet->header->length != 2)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case STATUS_RSP:
+            if(packet->header->length != 8)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case ERROR_RSP:
+            if(packet->header->length != 3)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        default:
+            return ERR_NOSUCHFUNCTION;
+    }
+    // check if mode and type info match
+    if((packet->header->mode == MODE_STATUS) &&
+       (packet->header->type != MSG_REQUEST))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else if((packet->header->mode == MODE_CLIENT) &&
+            (packet->header->type != MSG_REQUEST))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else if((packet->header->mode == MODE_SERVER) &&
+            (packet->header->type != MSG_RESPONSE) &&
+            (packet->header->type != MSG_ERROR))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else
+    {
+        return ERR_INVALIDMODE;
+    }
+
+    // ---- Check data field ----
+    switch(msg_type)
+    {
+        case DECRYPT_REQ:
+            if(((dat_decrypt_request*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case DECRYPT_RSP:
+            if(((dat_decrypt_response*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case UNLOCK_REQ:
+            if(((dat_unlock_request*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case STATUS_RSP:
+            if(((dat_status_response*)(packet->data))->clientID < -1)
+            {
+                return ERR_DATA;
+            }
+            break;
+        default:
+            break;
+    }
+
     return NO_ERROR;
 }
 
-uint8_t recv_msg(msg* packet)
+uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
+	/* socket-function recv(...);
+	 * packet->header = malloc(...);
+	 * packet->header->_____ = ______;
+	 * packet->data = malloc("abhängig von packettype aus header")
+	 * *src_ip = "aus socket-funktion"; */
 
+	return check_packet(packet);
 }
 
 FID get_msg_type(msg* packet)
 {
-
+    if (packet->header->type == MSG_ERROR)
+    {
+        return ERROR_RSP;
+    }
+    else if(packet->header->func == FNC_GP)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return GP_REQ;
+        }
+        else
+        {
+            return GP_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_DECRYPT)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return DECRYPT_REQ;
+        }
+        else
+        {
+            return DECRYPT_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_UNLOCK)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return UNLOCK_REQ;
+        }
+        else
+        {
+            return UNLOCK_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_BROADCAST)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return BROADCAST_REQ;
+        }
+        else
+        {
+            return BROADCAST_RSP;
+        }
+    }
+    else if(packet->header->func == FNC_STATUS)
+    {
+        if(packet->header->type == MSG_REQUEST)
+        {
+            return STATUS_REQ;
+        }
+        else
+        {
+            return STATUS_RSP;
+        }
+    }
+    return UNKNOWN;
 }
 
-uint8_t send_msg(msg* packet)
+uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
+	/* socket-function sendto(...) */
 
+	return SUCCESS;
 }

@@ -26,6 +26,8 @@
 #define ERR_FUNCTIONEXEC             33 ///< An error executing this function was detected
 #define ERR_DECRYPT                  64 ///< The data could not be decrypted due to an error
 #define ERR_ALLOC                   128 ///< Not enough free space to allocate data
+#define ERR_NOTFORME                129 ///< Client detected client ID miss match
+#define ERR_NO_INIT                 253 ///< The API lib was not initialized
 #define ERR_NO_PACKET               254 ///< No Packet was on the socket
 #define ERR_UNKNOWN                 255 ///< An error occurred that does not match any of the other ones (this should never happen)
 
@@ -37,9 +39,9 @@
 /// @brief An enumeration of all possible functions
 /// This is used as function ID reference
 typedef enum{
-    POLYNOME_REQ,                       ///< Function : set polynome; Type : Request
-    POLYNOME_RSP,                       ///< Function : set polynome; Type : Response
-    DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
+	GP_REQ,                       		///< Function : set polynome; Type : Request
+	GP_RSP,                      		///< Function : set polynome; Type : Response
+	DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
     DECRYPT_RSP,                        ///< Function : decrypt data; Type : Response
     UNLOCK_REQ,                         ///< Function : unlock server; Type : Request
     UNLOCK_RSP,                         ///< Function : unlock server; Type : Response
@@ -47,7 +49,8 @@ typedef enum{
     BROADCAST_RSP,                      ///< Function : broadcast; Type : Response
     STATUS_REQ,                         ///< Function : status check; Type : Request
     STATUS_RSP,                         ///< Function : status check; Type : Response
-    ERROR_RSP                           ///< Function : any; Type : Error
+	UNKNOWN,                             ///< Unknown function. This should not happen.
+	ERROR_RSP                          ///< Function : any; Type : Error
 }FID;
 
 /// @}
