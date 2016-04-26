@@ -32,7 +32,7 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip);
 
 /// \brief Send a decryption request
 /// Requests the decryption of a block
-/// @author <Author Name Here>
+/// @author Simon Lauser
 /// \param[in] BID : the id of the block to decrypt
 /// \param[in] data : the data to decrypt
 /// \param[in] data_len : the amount of words in data
