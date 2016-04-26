@@ -116,7 +116,7 @@ uint8_t check_packet(msg* packet);
 /// \return The error code that occurred
 /// @sa msg
 /// @sa macros
-uint8_t send_msg(msg* packet);
+uint8_t send_msg(msg* packet, uint32_t target_ip);
 
 /// @}
 
