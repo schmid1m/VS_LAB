@@ -104,7 +104,7 @@ typedef struct msg
 uint8_t check_packet(msg* packet);
 
 /// \brief Sends a message via UDP
-/// @author <Author Name Here>
+/// @author Cornelius Bott
 /// \param[in] packet: The packet to send
 /// \return The error code that occurred
 /// @sa msg
