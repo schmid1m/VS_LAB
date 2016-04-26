@@ -114,7 +114,7 @@ uint8_t check_packet(msg* packet)
     // ---- Header is consistent ----
     msg_type = get_msg_type(packet);
     // validate func ID
-    if(msg_type = UNKNOWN)
+    if(msg_type == UNKNOWN)
     {
         return ERR_HEADER_DATA;
     }
@@ -124,6 +124,7 @@ uint8_t check_packet(msg* packet)
         case GP_RSP:
         case UNLOCK_RSP:
         case BROADCAST_REQ:
+        case BROADCAST_RSP:
         case STATUS_REQ:
             if(packet->header->length != 0)
             {
@@ -131,7 +132,6 @@ uint8_t check_packet(msg* packet)
             }
             break;
         case GP_REQ:
-        case BROADCAST_RSP:
             if(packet->header->length != 4)
             {
                 return ERR_PACKETLENGTH;
@@ -194,7 +194,36 @@ uint8_t check_packet(msg* packet)
     }
 
     // ---- Check data field ----
-    // TODO check data field
+    switch(msg_type)
+    {
+        case DECRYPT_REQ:
+            if(((dat_decrypt_request*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case DECRYPT_RSP:
+            if(((dat_decrypt_response*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case UNLOCK_REQ:
+            if(((dat_unlock_request*)(packet->data))->clientID < 0)
+            {
+                return ERR_DATA;
+            }
+            break;
+        case STATUS_RSP:
+            if(((dat_status_response*)(packet->data))->clientID < -1)
+            {
+                return ERR_DATA;
+            }
+            break;
+        default:
+            break;
+    }
+
     return NO_ERROR;
 }
 

@@ -136,25 +136,25 @@ uint8_t send_brdcst_req()
 	uint8_t retVal;
 
 	// Allocate memory
-	tmp.header = (msg_header*) malloc(sizeof(msg_header));
+    tmp.header = (msg_header*) malloc(sizeof(msg_header));
 
 	// Fill header
-	tmp.header->priority = prio;
-	tmp.header->version = PROTOCOL_VERSION;
-	tmp.header->mode = MODE_CLIENT;
-	tmp.header->func = FNC_BROADCAST;
-	tmp.header->type = MSG_REQUEST;
-	tmp.header->length = 0;
+    tmp.header->priority = prio;
+    tmp.header->version = PROTOCOL_VERSION;
+    tmp.header->mode = MODE_CLIENT;
+    tmp.header->func = FNC_BROADCAST;
+    tmp.header->type = MSG_REQUEST;
+    tmp.header->length = 0;
 
 	// Check message
-	retVal = check_packet(&tmp);
+    retVal = check_packet(&tmp);
 	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
-	retVal = send_msg(&tmp,broadcastAddress);
+    retVal = send_msg(&tmp,broadcastAddress);
 
 	// Free memory
-	free(tmp.header);
+    free(tmp.header);
 
 	return retVal;
 }

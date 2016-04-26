@@ -9,8 +9,7 @@
 #include "internalMacros.h"
 #include "commonAPI.h"
 #include "serverAPI.h"
-
-static prio = 255;
+#include <stdlib.h>
 
 int init_server(/*socket, Server IP, testserver IP*/)
 {
@@ -19,10 +18,34 @@ int init_server(/*socket, Server IP, testserver IP*/)
 
 uint8_t send_gp_rsp(uint32_t target_client_ip)
 {
-	return SUCCESS;
+	msg temp_msg;
+	uint8_t error_code;
+
+	temp_msg.header = malloc(sizeof(msg_header));
+	temp_msg.data = NULL;
+
+	temp_msg.header->func = FNC_GP;
+	temp_msg.header->length = 0;
+	temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+	temp_msg.header->reserved = VALUE_RESERVED;
+	temp_msg.header->type = MSG_RESPONSE;
+	temp_msg.header->version = PROTOCOL_VERSION;
+
+	//check packet before sending
+	error_code = check_packet(&temp_msg);
+
+	if(error_code != NO_ERROR)
+	{
+		return error_code;
+	}
+
+	error_code = send_msg(&temp_msg,target_client_ip);
+	free(temp_msg.header);
+	return error_code;
 }
 
-uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint32_t target_client_ip, uint8_t* data, uint32_t data_len)
+uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip)
 {
 	msg tmp_msg;
 	uint8_t error_code;
@@ -32,7 +55,7 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint32_t target_client_ip, 
 	tmp_msg.header->func = FNC_DECRYPT;
 	tmp_msg.header->length = sizeof(dat_decrypt_response)+((data_len-1)*sizeof(uint8_t));
 	tmp_msg.header->mode = MODE_SERVER;
-	tmp_msg.header->priority = prio;
+    tmp_msg.header->priority = SERVER_PRIO;
 	tmp_msg.header->reserved = VALUE_RESERVED;
 	tmp_msg.header->type = MSG_RESPONSE;
 	tmp_msg.header->version = PROTOCOL_VERSION;
@@ -47,13 +70,13 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint32_t target_client_ip, 
 	}
 
 	//check packet before sending
-	error_code = check_packet(tmp_msg);
+    error_code = check_packet(&tmp_msg);
 	if(error_code != NO_ERROR)
 	{
 		return error_code;
 	}
 
-	error_code = send_msg(tmp_msg,target_client_ip);
+    error_code = send_msg(&tmp_msg,target_client_ip);
 	free(tmp_msg.header);
 	free(tmp_msg.data);
 	return error_code;
