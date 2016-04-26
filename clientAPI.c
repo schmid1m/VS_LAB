@@ -54,6 +54,40 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 
 uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
 {
+	msg tmp_msg;
+	uint8_t error_code;
+
+	tmp_msg.header = malloc(sizeof(msg_header));
+	tmp_msg.data = malloc(sizeof(dat_decrypt_request)+((data_len-1)*sizeof(uint16_t)));
+
+	tmp_msg.header->func = FNC_DECRYPT;
+	tmp_msg.header->length = sizeof(dat_decrypt_request)+((data_len-1)*sizeof(uint16_t));
+	tmp_msg.header->mode = MODE_CLIENT;
+	tmp_msg.header->priority = prio;
+	tmp_msg.header->reserved = VALUE_RESERVED;
+	tmp_msg.header->type = MSG_REQUEST;
+	tmp_msg.header->version = PROTOCOL_VERSION;
+
+	tmp_msg.data = malloc(tmp_msg.header->length);
+	dat_decrypt_request* tmp_data = (dat_decrypt_request*) tmp_msg.data;
+	tmp_data->blockID= BID;
+	tmp_data->clientID = clientID;
+
+	for (int var = 0; var < data_len; var++) {
+		&(tmp_data->firstElement)[var]=data[var];
+	}
+
+	//check packet before sending
+	error_code = check_packet(tmp_msg);
+	if(error_code != NO_ERROR)
+	{
+		return error_code;
+	}
+
+	error_code = send_msg(tmp_msg);
+	free(tmp_msg.header);
+	free(tmp_msg.data);
+	return error_code;
 
 }
 
