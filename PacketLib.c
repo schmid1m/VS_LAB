@@ -113,8 +113,86 @@ uint8_t check_packet(msg* packet)
     }
     // ---- Header is consistent ----
     msg_type = get_msg_type(packet);
+    // validate func ID
+    if(msg_type = UNKNOWN)
+    {
+        return ERR_HEADER_DATA;
+    }
     // Check length
-        switch(msg_type)
+    switch(msg_type)
+    {
+        case POLYNOME_RSP:
+        case UNLOCK_RSP:
+        case BROADCAST_REQ:
+        case STATUS_REQ:
+            if(packet->header->length != 0)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case POLYNOME_REQ:
+        case BROADCAST_RSP:
+            if(packet->header->length != 4)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case DECRYPT_REQ:
+            if((packet->header->length < 6) ||
+               ((packet->header->length % 2) != 1))
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case DECRYPT_RSP:
+            if(packet->header->length < 5)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case UNLOCK_REQ:
+            if(packet->header->length != 2)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case STATUS_RSP:
+            if(packet->header->length != 8)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        case ERROR_RSP:
+            if(packet->header->length != 3)
+            {
+                return ERR_PACKETLENGTH;
+            }
+            break;
+        default:
+            return ERR_NOSUCHFUNCTION;
+    }
+    // check if mode and type info match
+    if((packet->header->mode == MODE_STATUS) &&
+       (packet->header->type != MSG_REQUEST))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else if((packet->header->mode == MODE_CLIENT) &&
+            (packet->header->type != MSG_REQUEST))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else if((packet->header->mode == MODE_SERVER) &&
+            (packet->header->type != MSG_RESPONSE) &&
+            (packet->header->type != MSG_ERROR))
+    {
+        return ERR_HEADER_DATA;
+    }
+    else
+    {
+        return ERR_INVALIDMODE;
+    }
+
     // ---- Check data field ----
     // TODO check data field
     return NO_ERROR;
