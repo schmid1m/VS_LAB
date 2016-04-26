@@ -19,7 +19,31 @@ int init_server(/*socket, Server IP, testserver IP*/)
 
 uint8_t send_gp_rsp(uint32_t target_client_ip)
 {
-	return SUCCESS;
+	msg temp_msg;
+	uint8_t error_code;
+
+	temp_msg.header = malloc(sizeof(msg_header));
+	temp_msg.data = NULL;
+
+	temp_msg.header->func = FNC_GP;
+	temp_msg.header->length = 0;
+	temp_msg.header->mode = MODE_SERVER;
+	temp_msg.header->priority = prio;
+	temp_msg.header->reserved = VALUE_RESERVED;
+	temp_msg.header->type = MSG_RESPONSE;
+	temp_msg.header->version = PROTOCOL_VERSION;
+
+	//check packet before sending
+	error_code = check_packet(&temp_msg);
+
+	if(error_code != NO_ERROR)
+	{
+		return error_code;
+	}
+
+	error_code = send_msg(&temp_msg,target_client_ip);
+	free(temp_msg.header);
+	return error_code;
 }
 
 uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint32_t target_client_ip, uint8_t* data, uint32_t data_len)
