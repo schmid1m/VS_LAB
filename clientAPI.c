@@ -7,22 +7,54 @@
 **************************************************************/
 
 #include "internalMacros.h"
+#include "Macros.h"
 #include "commonAPI.h"
 #include "clientAPI.h"
 #include <stdlib.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 static int16_t clientID 		 = -1;
 static uint8_t prio 			 = 255;
 static uint32_t broadcastAddress = 0;
 static uint8_t initialized 		 = 0;
 
-void init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
+int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
 	clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
 	initialized = 1; // true
+
+	// init socket //
+	clScktDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (clScktDscp < 0)
+	{
+		initialized = 0;
+		return ERROR;
+	}
+
+	// initialize client structure
+	client.sin_family = AF_INET;					// Ethernet
+	client.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
+	client.sin_port = htons(0);						// set vslab server port
+	memset(&(client.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
+	// initialize server structure
+	client_target.sin_family = AF_INET;			// Ethernet
+	client_target.sin_addr.s_addr = inet_addr(SERVER_UNICAST_ADDRESS);
+	client_target.sin_port = htons(SERVER_PORT);
+	memset(&(client_target.sin_zero), 0x00, 8);
+	// bind socket
+	if (bind(clScktDscp, (struct sockaddr *)&client, sizeof(struct sockaddr)) < 0)
+	{
+		close(clScktDscp);
+		initialized = 0;
+		return ERROR;
+	}
+
+	return SUCCESS;
+
+	// TODO: deinit_client schreiben und den Socket schließen ;-)
 }
 
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
