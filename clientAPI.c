@@ -10,20 +10,19 @@
 #include "commonAPI.h"
 #include "clientAPI.h"
 #include <stdlib.h>
+#include <string.h>
 
 static int16_t clientID 		 = -1;
 static uint8_t prio 			 = 255;
 static uint32_t broadcastAddress = 0;
 static uint8_t initialized 		 = 0;
 
-int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
+void init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
 	clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
 	initialized = 1; // true
-
-	return SUCCESS;
 }
 
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
@@ -180,14 +179,14 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
 {
 	if(!initialized) return ERR_NO_INIT;
 
-	if(((dat_decrypt_response*)packet.data)->clientID != clientID) return ERR_NOTFORME;
+    if(((dat_decrypt_response*)packet->data)->clientID != clientID) return ERR_NOTFORME;
 
-	*BID = ((dat_decrypt_response*)packet.data)->blockID;
-	*data_len = packet.header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
+    *BID = ((dat_decrypt_response*)packet->data)->blockID;
+    *data_len = packet->header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
 
 	// Copy ASCII-Chars
-	*data = (uint8_t*)malloc(sizeof(uint8_t * (*data_len)));
-	memcpy(*data,&((dat_decrypt_response*)packet.data)->firstElement,*data_len);
+    *data = (uint8_t*)malloc(sizeof(uint8_t) * (*data_len));
+    memcpy(*data,&((dat_decrypt_response*)packet->data)->firstElement,*data_len);
 
 	return NO_ERROR;
 }
@@ -210,8 +209,8 @@ uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
 {
 	if(!initialized) return ERR_NO_INIT;
 
-	*error_code = ((error*)packet.data)->errCode;
-	*BID = ((error*)packet.data)->blockID;
+    *error_code = ((error*)packet->data)->errCode;
+    *BID = ((error*)packet->data)->blockID;
 
 	return NO_ERROR;
 }
