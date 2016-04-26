@@ -17,6 +17,7 @@
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields
 #define MAX_PACKET_LENGTH         60000 ///< The maximal packet length (60kB)
 #define NO_BLOCK_ID                   0 ///< No block ID is present
+#define SERVER_PRIO                   0 ///< Priority of server messages
 
 // Version definition
 #define PROTOCOL_VERSION             14 ///< The version of the protocol

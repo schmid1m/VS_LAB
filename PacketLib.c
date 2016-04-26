@@ -114,7 +114,7 @@ uint8_t check_packet(msg* packet)
     // ---- Header is consistent ----
     msg_type = get_msg_type(packet);
     // validate func ID
-    if(msg_type = UNKNOWN)
+    if(msg_type == UNKNOWN)
     {
         return ERR_HEADER_DATA;
     }
@@ -197,25 +197,25 @@ uint8_t check_packet(msg* packet)
     switch(msg_type)
     {
         case DECRYPT_REQ:
-            if(((dat_decrypt_request)(packet->data)).clientID < 0)
+            if(((dat_decrypt_request*)(packet->data))->clientID < 0)
             {
                 return ERR_DATA;
             }
             break;
         case DECRYPT_RSP:
-            if(((dat_decrypt_response)(packet->data)).clientID < 0)
+            if(((dat_decrypt_response*)(packet->data))->clientID < 0)
             {
                 return ERR_DATA;
             }
             break;
         case UNLOCK_REQ:
-            if(((dat_unlock_request)(packet->data)).clientID < 0)
+            if(((dat_unlock_request*)(packet->data))->clientID < 0)
             {
                 return ERR_DATA;
             }
             break;
         case STATUS_RSP:
-            if(((dat_status_response)(packet->data)).clientID < -1)
+            if(((dat_status_response*)(packet->data))->clientID < -1)
             {
                 return ERR_DATA;
             }
