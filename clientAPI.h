@@ -23,7 +23,7 @@ int init_client(/*Client ID,Prio,socket*/);
 
 /// \brief Send a generator polynome
 /// This function sets a generator polynome to lock a server
-/// @author <Author Name Here>
+/// @author Simon Lauser
 /// \param[in] gp : the generator polynome
 /// \param[in] target_server_ip : the IP address of the target server
 /// \return The error code that occurred.
