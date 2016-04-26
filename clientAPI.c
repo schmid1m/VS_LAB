@@ -11,7 +11,8 @@
 #include "clientAPI.h"
 
 static int16_t clientID;
-static int16_t prio;
+static uint8_t prio;
+static uint32_t broadcastAddress;
 
 int init_client(/*Client ID,Prio,socket*/)
 {
@@ -58,10 +59,10 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 
 uint8_t send_unlock_req(uint32_t target_server_ip)
 {
+	msg tmp;
 	uint8_t retVal;
 
 	// Allocate memory
-	msg tmp;
 	tmp->header = (msg_header*) malloc(sizeof(msg_header));
 	tmp->data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
 
@@ -74,7 +75,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 	tmp->header->length = sizeof(dat_unlock_request);
 
 	// Fill datafield
-	((dat_unlock_request*)tmp->data)->clientID = (int16_t)myID;
+	((dat_unlock_request*)tmp->data)->clientID = (int16_t)clientID;
 
 	// Check message
 	retVal = check_packet(tmp);
@@ -92,17 +93,47 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 
 uint8_t send_brdcst_req()
 {
-	return SUCCESS;
+	msg tmp;
+	uint8_t retVal;
+
+	// Allocate memory
+	tmp->header = (msg_header*) malloc(sizeof(msg_header));
+
+	// Fill header
+	tmp->header->priority = prio;
+	tmp->header->version = PROTOCOL_VERSION;
+	tmp->header->mode = MODE_CLIENT;
+	tmp->header->func = FNC_BROADCAST;
+	tmp->header->type = MSG_REQUEST;
+	tmp->header->length = 0;
+
+	// Check message
+	retVal = check_packet(tmp);
+	if(retVal != NO_ERROR) return retVal;
+
+	// Send out message
+	retVal = send_msg(tmp,broadcastAddress);
+
+	// Free memory
+	free(tmp->header);
+
+	return retVal;
 }
 
-uint8_t extract_gp_rsp(msg* packet, uint32_t* src_server_ip)
+uint8_t extract_gp_rsp(msg* packet)
 {
-	return SUCCESS;
+	return NO_ERROR;	/* Nothing to extract here */
 }
 
-uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, uint32_t* src_server_ip)
+uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t* data, uint32_t* data_len, int16_t p_clientID)
 {
-	return SUCCESS;
+	if(p_clientID != clientID) return ERR_UNKNOWN; // !!! Specific error required !!!
+
+	*BID = ((dat_decrypt_response*)packet->data)->blockID;
+	*data_len = packet->header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
+	memcpy(data,&((dat_decrypt_response*)packet->data)->firstElement,*data_len);
+
+	return NO_ERROR;
 }
 
 uint8_t extract_unlock_rsp(msg* packet, uint32_t* src_client_ip)
