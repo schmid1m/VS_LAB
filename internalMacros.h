@@ -27,7 +27,7 @@
 #define MODE_CLIENT                   3 ///< A client sent the message
 
 // Function definitions
-#define FNC_POLYNOME                  0 ///< Sets the polynome in the server
+#define FNC_GP                		  0 ///< Sets the polynome in the server
 #define FNC_DECRYPT                   1 ///< Decrypts a chunk of the file
 #define FNC_UNLOCK                    2 ///< Unlocks the server to make it available for other clients
 #define FNC_BROADCAST                 5 ///< Broadcast to discover all available servers

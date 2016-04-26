@@ -31,11 +31,11 @@ typedef struct msg_header
 
 /// @brief Set polynome request
 /// This function tries to set the polynome if the server is free or the current client has lower priority
-typedef struct dat_polynom_request
+typedef struct dat_gp_request
 {
 	int16_t clientID;						///< The ID of the requesting client
 	uint16_t generator;						///< The generator polynome
-}__attribute__((__packed__)) dat_polynom_request;
+}__attribute__((__packed__)) dat_gp_request;
 
 /// @brief Decrypt data
 /// Request to decrypt data. Polynome has to be set first. @sa dat_polynom_request

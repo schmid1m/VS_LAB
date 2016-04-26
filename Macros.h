@@ -38,9 +38,9 @@
 /// @brief An enumeration of all possible functions
 /// This is used as function ID reference
 typedef enum{
-    POLYNOME_REQ,                       ///< Function : set polynome; Type : Request
-    POLYNOME_RSP,                       ///< Function : set polynome; Type : Response
-    DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
+	GP_REQ,                       		///< Function : set polynome; Type : Request
+	GP_RSP,                      		///< Function : set polynome; Type : Response
+	DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
     DECRYPT_RSP,                        ///< Function : decrypt data; Type : Response
     UNLOCK_REQ,                         ///< Function : unlock server; Type : Request
     UNLOCK_RSP,                         ///< Function : unlock server; Type : Response
@@ -48,8 +48,8 @@ typedef enum{
     BROADCAST_RSP,                      ///< Function : broadcast; Type : Response
     STATUS_REQ,                         ///< Function : status check; Type : Request
     STATUS_RSP,                         ///< Function : status check; Type : Response
-    ERROR_RSP,                          ///< Function : any; Type : Error
-    UNKNOWN                             ///< Unknown function. This should not happen.
+	UNKNOWN,                             ///< Unknown function. This should not happen.
+	ERROR_RSP                          ///< Function : any; Type : Error
 }FID;
 
 /// @}
