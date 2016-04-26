@@ -28,7 +28,7 @@ uint8_t recv_msg(msg* packet);
 
 /// \brief get_msg_type
 /// This function returns the type of the current message.
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : The packet to get the type of.
 /// \return The error code that occurred.
 /// @sa FID
