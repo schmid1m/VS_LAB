@@ -307,18 +307,15 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	// check for valid pointer
 	if(NULL == packet)
 	{
-		return -1;
+		return ERROR;
 	}
 
-	/* setup network info */
-	///	TODO: take the info from ONE CENTRAL library-socket to get the correct IP etc...
+	target_addr.sin_addr.s_addr = target_ip;
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
-	struct sockaddr_in sa;
-	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
-	int client_socket = 0;
+
 	/* use socket-function sendto(...) */
-	if(packet_length != sendto(client_socket, packet, packet_length, 0, sa)){
-		return -1;
+	if(packet_length != sendto(socketDscp, packet, packet_length, 0, target_addr)){
+		return ERROR;
 	}
 
 	return SUCCESS;

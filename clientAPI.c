@@ -27,27 +27,28 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	initialized = 1; // true
 
 	// init socket //
-	clScktDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (clScktDscp < 0)
+	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socketDscp < 0)
 	{
 		initialized = 0;
 		return ERROR;
 	}
 
-	// initialize client structure
-	client.sin_family = AF_INET;					// Ethernet
-	client.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
-	client.sin_port = htons(0);						// set vslab server port
-	memset(&(client.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
-	// initialize server structure
-	client_target.sin_family = AF_INET;			// Ethernet
-	client_target.sin_addr.s_addr = inet_addr(SERVER_UNICAST_ADDRESS);
-	client_target.sin_port = htons(SERVER_PORT);
-	memset(&(client_target.sin_zero), 0x00, 8);
+	// initialize my socket
+	my_addr.sin_family = AF_INET;					// Ethernet
+	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
+	/// TODO: take correct port   -> #define SERVER_PORT	11111 ?????
+	my_addr.sin_port = htons(0);						// set vslab server port
+	memset(&(my_addr.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
+	// initialize target structure
+	target_addr.sin_family = AF_INET;			// Ethernet
+	target_addr.sin_addr.s_addr = inet_addr(SERVER_UNICAST_ADDRESS);
+	target_addr.sin_port = htons(SERVER_PORT);
+	memset(&(target_addr.sin_zero), 0x00, 8);
 	// bind socket
-	if (bind(clScktDscp, (struct sockaddr *)&client, sizeof(struct sockaddr)) < 0)
+	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
-		close(clScktDscp);
+		close(socketDscp);
 		initialized = 0;
 		return ERROR;
 	}
