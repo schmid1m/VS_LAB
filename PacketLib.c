@@ -227,17 +227,6 @@ uint8_t check_packet(msg* packet)
     return NO_ERROR;
 }
 
-uint8_t recv_msg(msg* packet, uint32_t* src_ip)
-{
-	/* socket-function recv(...);
-	 * packet->header = malloc(...);
-	 * packet->header->_____ = ______;
-	 * packet->data = malloc("abh�ngig von packettype aus header")
-	 * *src_ip = "aus socket-funktion"; */
-
-	return check_packet(packet);
-}
-
 FID get_msg_type(msg* packet)
 {
     if (packet->header->type == MSG_ERROR)
@@ -300,6 +289,99 @@ FID get_msg_type(msg* packet)
         }
     }
     return UNKNOWN;
+}
+
+uint8_t recv_msg(msg* packet, uint32_t* src_ip)
+{
+	int result;
+	msg* recvmsg;
+	// allocate header memory is the same for every packet type
+	packet->header = calloc(1, sizeof(msg_header));
+
+	// struct to get the source ip
+	struct sockaddr *src_addr = malloc(sizeof(struct sockaddr));
+	// we deal only with ipv4 but safety first ;-) --> think check is not neccesary
+	socklen_t addr_length = sizeof(struct sockaddr);
+
+	// check for valid pointer
+	if((NULL == packet) || (NULL == src_ip))
+	{
+		return ERROR;
+	}
+
+	// allocate enough packet buffer
+	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
+	if(NULL == buffer)
+	{
+		return ERR_ALLOC;
+	}
+
+	// receive packet
+	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, src_addr, &addr_length);
+	if((result == -1) || (result == 0))
+	{
+		return ERROR;
+	}
+
+	// cast packet to take a look into the header
+	recvmsg = (msg*)buffer;
+	// decide how many memory needs to be allocated
+	switch(get_msg_type(recvmsg))
+	{
+		case GP_REQ:
+				packet->data = calloc(1, sizeof(dat_gp_request));
+				break;
+		case GP_RSP:
+				// no response?
+				break;
+		case DECRYPT_REQ:
+				packet->data = calloc(1, sizeof(dat_decrypt_request));
+				break;
+		case DECRYPT_RSP:
+				packet->data = calloc(1, sizeof(dat_decrypt_response));
+				break;
+		case UNLOCK_REQ:
+				packet->data = calloc(1, sizeof(dat_unlock_request));
+				break;
+		case UNLOCK_RSP:
+				// no response?
+				break;
+		case BROADCAST_REQ:
+				// no request data?
+				break;
+		case BROADCAST_RSP:
+				packet->data = calloc(1, sizeof(dat_broadcast_response));
+				break;
+		case STATUS_REQ:
+				// no data?
+				break;
+		case STATUS_RSP:
+				packet->data = calloc(1, sizeof(dat_status_response));
+				break;
+		case UNKNOWN:
+				// what to do?
+				return ERR_NO_PACKET;
+				break;
+		case ERROR_RSP:
+				break;
+		default:
+				return ERR_NO_PACKET;
+	}
+
+
+	/* socket-function recv(...);
+	 * packet->header = malloc(...);
+	 * packet->header->_____ = ______;
+	 * packet->data = malloc("abh�ngig von packettype aus header")
+	 * *src_ip = "aus socket-funktion"; */
+
+	// was bedeutet die Länge im Header? = HEADER + DATEN? oder versenden wir immer nur 2 Byte decrypted?
+
+	// cleanup
+	free(src_addr);
+	free(buffer);
+
+	return check_packet(packet);
 }
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
