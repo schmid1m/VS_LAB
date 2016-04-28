@@ -95,7 +95,7 @@ uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio);
 /// \param[out] data_len : the amount of data words to decrypt
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t* data, uint32_t* data_len);
+uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len);
 
 /// \brief Extract the unlock command
 /// extract the command to unlock the server

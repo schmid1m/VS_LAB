@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 
+// server socket
+static uint8_t initialized 		 = 0;
+
 int init_server(/*socket, Server IP, testserver IP*/)
 {
 	// init socket //
@@ -238,26 +241,97 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client
 
 uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio)
 {
-	return SUCCESS;
+    if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    *prio = packet->header->priority;
+    *gp = ((dat_gp_request*)(packet->data))->generator;
+    *CID = ((dat_gp_request*)(packet->data))->clientID;
+
+    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t* data, uint32_t* data_len)
+uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len)
 {
-	return SUCCESS;
+    if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    *data = malloc(packet->header->length - (2 * sizeof(uint16_t)));
+    if(*data == NULL)
+    {
+        return ERR_ALLOC;
+    }
+
+    data_len = packet->header->length - (2 * sizeof(uint16_t));
+    *CID = ((dat_decrypt_request*)(packet->data))->clientID;
+    *BID = ((dat_decrypt_request*)(packet->data))->blockID;
+
+    for(uint32_t index = 0; index < data_len; index++)
+    {
+        data[index] = &(((dat_decrypt_request*)(packet->data))->firstElement)[index];
+    }
+
+    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_unlock_req(msg* packet, uint16_t* CID)
 {
-	return SUCCESS;
+    if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    *CID = ((dat_unlock_request*)(packet->data))->clientID;
+
+    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_brdcst_req(msg* packet)
 {
-	return SUCCESS;
+    if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    return NO_ERROR;
 }
 
 uint8_t extract_status_req(msg* packet)
 {
-	return SUCCESS;
+    if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    return NO_ERROR;
 }
 

@@ -14,11 +14,6 @@
 
 extern uint8_t *rec_buf;
 
-// server socket
-static int socketDscp = 0;                  // socket descriptor
-static struct sockaddr_in	my_addr;		// my own address information
-static struct sockaddr_in	target_addr;	// target address information
-
 /// \defgroup general General API functions
 /// API Functions that apply to both sides, client and server
 /// @{

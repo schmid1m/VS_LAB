@@ -35,13 +35,13 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	}
 
 	// initialize my socket
-	my_addr.sin_family = AF_INET;					// Ethernet
+    my_addr.sin_family = AF_INET;					    // Ethernet
 	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
 	/// TODO: take correct port   -> #define SERVER_PORT	11111 ?????
 	my_addr.sin_port = htons(0);						// set vslab server port
-	memset(&(my_addr.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
+    memset(&(my_addr.sin_zero), 0x00, 8);		        // set remaining bytes to 0x0
 	// initialize target structure
-	target_addr.sin_family = AF_INET;			// Ethernet
+    target_addr.sin_family = AF_INET;			        // Ethernet
 	target_addr.sin_addr.s_addr = inet_addr(SERVER_UNICAST_ADDRESS);
 	target_addr.sin_port = htons(SERVER_PORT);
 	memset(&(target_addr.sin_zero), 0x00, 8);
@@ -218,12 +218,28 @@ uint8_t extract_gp_rsp(msg* packet)
 {
 	if(!initialized) return ERR_NO_INIT;
 
-	return NO_ERROR;	/* Nothing to extract here */
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    return NO_ERROR;	/* Nothing to extract here */
 }
 
 uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len)
 {
 	if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
 
     if(((dat_decrypt_response*)packet->data)->clientID != clientID) return ERR_NOTFORME;
 
@@ -245,19 +261,43 @@ uint8_t extract_unlock_rsp(msg* packet)
 {
 	if(!initialized) return ERR_NO_INIT;
 
-	return NO_ERROR;	/* Nothing to extract here */
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    return NO_ERROR;	/* Nothing to extract here */
 }
 
 uint8_t extract_brdcst_rsp(msg* packet)
 {
 	if(!initialized) return ERR_NO_INIT;
 
-	return NO_ERROR;	/* Server IP is extracted by recv_msg() */
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
 {
 	if(!initialized) return ERR_NO_INIT;
+
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
 
     *error_code = ((error*)packet->data)->errCode;
     *BID = ((error*)packet->data)->blockID;

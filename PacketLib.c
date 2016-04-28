@@ -73,11 +73,8 @@ int get_mode(void *data){
 }
 */
 
-
-uint8_t check_packet(msg* packet)
+uint8_t check_pointers(msg* packet)
 {
-    FID msg_type;
-
     // check for valid pointers
     if((NULL == packet) || (NULL == packet->header))
     {
@@ -86,6 +83,19 @@ uint8_t check_packet(msg* packet)
     if((NULL == packet->data) && (packet->header->length != 0))
     {
         return ERR_INVALID_PTR;
+    }
+    return NO_ERROR;
+}
+
+uint8_t check_packet(msg* packet)
+{
+    FID msg_type;
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
     }
 
     // ---- check header fields on their own ----
@@ -240,12 +250,10 @@ uint8_t check_packet(msg* packet)
 
 FID get_msg_type(msg* packet)
 {
-    // check for valid pointers
-    if((NULL == packet) || (NULL == packet->header))
-    {
-        return UNKNOWN;
-    }
-    if((NULL == packet->data) && (packet->header->length != 0))
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
     {
         return UNKNOWN;
     }
@@ -316,19 +324,20 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
 	int result;
 	msg* recvmsg;
-	// allocate header memory is the same for every packet type
-	packet->header = calloc(1, sizeof(msg_header));
+
+    // check for valid pointer
+    if((NULL == packet) || (NULL == src_ip))
+    {
+        return ERROR;
+    }
+
+    // allocate header memory is the same for every packet type
+    packet->header = calloc(1, sizeof(msg_header));
 
 	// struct to get the source ip
 	struct sockaddr *src_addr = malloc(sizeof(struct sockaddr));
 	// we deal only with ipv4 but safety first ;-) --> think check is not neccesary
 	socklen_t addr_length = sizeof(struct sockaddr);
-
-	// check for valid pointer
-	if((NULL == packet) || (NULL == src_ip))
-	{
-		return ERROR;
-	}
 
 	// allocate enough packet buffer
 	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
@@ -433,22 +442,17 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 
 uint8_t free_msg(msg* packet)
 {
-    // is packet pointer valid?
-    if(NULL == packet)
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
     {
-        return ERROR;
+        return retVal;
     }
-    // is header pointer valid?
-    if(NULL == packet->header)
-    {
-        return ERROR;
-    }
-    else
-    {
-        //delete valid header pointer
-        free(packet->header);
-        packet->header = NULL;
-    }
+
+    //delete header pointer
+    free(packet->header);
+    packet->header = NULL;
     if(packet->data != NULL)
     {
         free(packet->data);
@@ -456,4 +460,5 @@ uint8_t free_msg(msg* packet)
     }
     free(packet);
     packet = NULL;
+    return NO_ERROR;
 }

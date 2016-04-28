@@ -15,6 +15,10 @@
 /// Data Structures for internal use
 /// @{
 
+static int socketDscp = 0;                  // socket descriptor
+static struct sockaddr_in	my_addr;		// my own address information
+static struct sockaddr_in	target_addr;	// target address information
+
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
 /// The internal structure holds all the values then.
@@ -95,6 +99,13 @@ typedef struct msg
 /// \defgroup functions Internal Functions
 /// Functions for internal use only
 /// @{
+
+/// \brief check_pointers
+/// @author Michel Schmidt
+/// \param packet : the packet pointers to check
+/// \return ERR_INVALID_PTR or NO_ERROR
+/// @sa ERR_INVALID_PTR @sa NO_ERROR
+uint8_t check_pointers(msg* packet);
 
 /// \brief Check a packet for internal errors
 /// @author Michel Schmidt
