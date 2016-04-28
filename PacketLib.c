@@ -395,10 +395,16 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	target_addr.sin_addr.s_addr = target_ip;
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 
-	/* use socket-function sendto(...) */
-	if(packet_length != sendto(socketDscp, packet, packet_length, 0, target_addr)){
-		return ERROR;
-	}
+    uint8_t* bitstream = malloc(packet_length);
+    memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
+    memcpy((void*)bitstream, (void*)packet->data, packet->header->length);
 
-	return SUCCESS;
+	/* use socket-function sendto(...) */
+    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr)){
+        free(bitstream);
+		return ERROR;
+    }
+
+    free(bitstream);
+    return SUCCESS;
 }
