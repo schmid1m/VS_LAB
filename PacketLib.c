@@ -310,9 +310,14 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 		return -1;
 	}
 
+	/* setup network info */
+	///	TODO: take the info from ONE CENTRAL library-socket to get the correct IP etc...
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
+	struct sockaddr_in sa;
+	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
+	int socket_num = 0;
 	/* use socket-function sendto(...) */
-	if(packet_length != sendto(socketDscp, packet, packet_length, 0, target_addr)){
+	if(packet_length != sendto(socket_num, packet, packet_length, 0, sa)){
 		return ERROR;
 	}
 

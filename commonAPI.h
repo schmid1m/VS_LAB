@@ -12,14 +12,12 @@
 #include "Macros.h"
 #include "PacketLib.h"
 
-extern uint8_t *rec_buf;
-
 /// \defgroup general General API functions
 /// API Functions that apply to both sides, client and server
 /// @{
 
 /// \brief Receive a message
-/// This function receives a message if there is one present on the socket.
+/// This function receives a message if there is one present on the Server.
 /// It also does a syntax check on the message to find badly generated packets.
 /// @author <Author Name Here>
 /// \param[out] packet : The received packet
