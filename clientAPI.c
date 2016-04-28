@@ -61,11 +61,23 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 {
 	msg temp_msg;
+    uint8_t error_code;
 
 	if(!initialized) return ERR_NO_INIT;
 
 	temp_msg.header = malloc(sizeof(msg_header));
-	temp_msg.data = malloc(sizeof(dat_gp_request));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+
+    temp_msg.data = malloc(sizeof(dat_gp_request));
+    if(temp_msg.data == NULL)
+    {
+        free(temp_msg.header);
+        return ERR_ALLOC;
+    }
+
 
 	temp_msg.header->func = FNC_GP;
 	temp_msg.header->length = sizeof(dat_gp_request);
@@ -87,6 +99,7 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
 {
 	msg tmp_msg;
+    uint8_t error_code;
 
     if(!initialized) return ERR_NO_INIT;
 
@@ -129,6 +142,7 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 uint8_t send_unlock_req(uint32_t target_server_ip)
 {
 	msg tmp;
+    uint8_t retVal;
 
 	if(!initialized) return ERR_NO_INIT;
 
@@ -141,7 +155,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
     tmp.data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
     if(tmp.data == NULL)
     {
-        free(tmp_msg.header);
+        free(tmp.header);
         return ERR_ALLOC;
     }
 
@@ -170,6 +184,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 uint8_t send_brdcst_req()
 {
 	msg tmp;
+    uint8_t retVal;
 
 	if(!initialized) return ERR_NO_INIT;
 
@@ -177,7 +192,7 @@ uint8_t send_brdcst_req()
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
     if(tmp.header == NULL)
     {
-        free(tmp_msg.header);
+        free(tmp.header);
         return ERR_ALLOC;
     }
     tmp.data = NULL;
