@@ -114,12 +114,54 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
 
 uint8_t send_unlock_rsp(uint32_t target_client_ip)
 {
-	return SUCCESS;
+    msg temp_msg;
+    uint8_t error_code;
+
+    temp_msg.data = NULL;
+    temp_msg.header = malloc(sizeof(msg_header));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    temp_msg.data = NULL;
+
+    temp_msg.header->func = FNC_UNLOCK;
+    temp_msg.header->length = 0;
+    temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+    temp_msg.header->reserved = VALUE_RESERVED;
+    temp_msg.header->type = MSG_RESPONSE;
+    temp_msg.header->version = PROTOCOL_VERSION;
+
+    error_code = send_msg(&temp_msg,target_client_ip);
+    free(temp_msg.header);
+    return error_code;
 }
 
 uint8_t send_brdcst_rsp(uint32_t target_client_ip)
 {
-	return SUCCESS;
+    msg temp_msg;
+    uint8_t error_code;
+
+    temp_msg.data = NULL;
+    temp_msg.header = malloc(sizeof(msg_header));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    temp_msg.data = NULL;
+
+    temp_msg.header->func = FNC_BROADCAST;
+    temp_msg.header->length = 0;
+    temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+    temp_msg.header->reserved = VALUE_RESERVED;
+    temp_msg.header->type = MSG_RESPONSE;
+    temp_msg.header->version = PROTOCOL_VERSION;
+
+    error_code = send_msg(&temp_msg,target_client_ip);
+    free(temp_msg.header);
+    return error_code;
 }
 
 uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)

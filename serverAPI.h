@@ -57,7 +57,7 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 
 /// \brief Send a status response
 /// Send the current status to the status script
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] CID : The client ID
 /// \param[in] sequence_number : The sequence number for the current client
 /// \return The error code that occurred.
@@ -65,7 +65,7 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number);
 
 /// \brief Send an error message
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] err_code : the error that occurred
 /// \param[in] BID : The Block ID of this Block
 /// \param[in] target_client_ip : the IP address of the target client
