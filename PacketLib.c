@@ -386,11 +386,21 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-	// check for valid pointer
-	if(NULL == packet)
-	{
-		return ERROR;
-	}
+    // check for valid pointers
+    if((NULL == packet) || (NULL == packet->header))
+    {
+        return ERR_INVALID_PTR;
+    }
+    if((NULL == packet->data) && (packet->header->length != 0))
+    {
+        return ERR_INVALID_PTR;
+    }
+
+    uint8_t ret_val = check_packet(packet);
+    if(ret_val != NO_ERROR)
+    {
+        return ret_val;
+    }
 
 	target_addr.sin_addr.s_addr = target_ip;
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
@@ -402,11 +412,11 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	/* use socket-function sendto(...) */
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr)){
         free(bitstream);
-		return ERROR;
+        return ERR_SEND_ERROR;
     }
 
     free(bitstream);
-    return SUCCESS;
+    return NO_ERROR;
 }
 
 uint8_t free_msg(msg* packet)
