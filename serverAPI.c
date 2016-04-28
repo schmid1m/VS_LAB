@@ -52,7 +52,6 @@ uint8_t send_gp_rsp(uint32_t target_client_ip)
 	msg temp_msg;
 	uint8_t error_code;
 
-    temp_msg.data = NULL;
 	temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
     {
@@ -117,7 +116,6 @@ uint8_t send_unlock_rsp(uint32_t target_client_ip)
     msg temp_msg;
     uint8_t error_code;
 
-    temp_msg.data = NULL;
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
     {
@@ -143,7 +141,6 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
     msg temp_msg;
     uint8_t error_code;
 
-    temp_msg.data = NULL;
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
     {
@@ -166,12 +163,77 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
 
 uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 {
-	return SUCCESS;
+    msg temp_msg;
+    uint8_t error_code;
+    dat_status_response* dat;
+
+    temp_msg.header = malloc(sizeof(msg_header));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    dat = malloc(sizeof(dat_status_response));
+    if(dat == NULL)
+    {
+        free(temp_msg.header);
+        return ERR_ALLOC;
+    }
+
+    temp_msg.header->func = FNC_BROADCAST;
+    temp_msg.header->length = 0;
+    temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+    temp_msg.header->reserved = VALUE_RESERVED;
+    temp_msg.header->type = MSG_RESPONSE;
+    temp_msg.header->version = PROTOCOL_VERSION;
+
+    dat->clientID = CID;
+    dat->wordCount = sequence_number;
+    dat->reserved = VALUE_RESERVED;
+
+    temp_msg.data = (void*) dat;
+
+    error_code = send_msg(&temp_msg,target_client_ip);
+    free(temp_msg.header);
+    free(temp_msg.data);
+    return error_code;
 }
 
 uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client_ip, FID fid)
 {
-	return SUCCESS;
+    msg temp_msg;
+    uint8_t error_code;
+    error* dat;
+
+    temp_msg.header = malloc(sizeof(msg_header));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    dat = malloc(sizeof(error));
+    if(dat == NULL)
+    {
+        free(temp_msg.header);
+        return ERR_ALLOC;
+    }
+
+    temp_msg.header->func = FNC_BROADCAST;
+    temp_msg.header->length = 0;
+    temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+    temp_msg.header->reserved = VALUE_RESERVED;
+    temp_msg.header->type = MSG_RESPONSE;
+    temp_msg.header->version = PROTOCOL_VERSION;
+
+    dat->errCode = error_code;
+    dat->blockID = blk_ID;
+
+    temp_msg.data = (void*) dat;
+
+    error_code = send_msg(&temp_msg,target_client_ip);
+    free(temp_msg.header);
+    free(temp_msg.data);
+    return error_code;
 }
 
 uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio, uint32_t* src_client_ip)
