@@ -309,10 +309,10 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 	struct sockaddr_in sa;
 	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
-	int socket_num = 0;
+	int client_socket = 0;
 	/* use socket-function sendto(...) */
-	if(packet_length != sendto(socket_num, packet, packet_length, 0, sa)){
-		return ERROR;
+	if(packet_length != sendto(client_socket, packet, packet_length, 0, sa)){
+		return -1;
 	}
 
 	return SUCCESS;

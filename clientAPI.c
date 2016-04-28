@@ -16,7 +16,6 @@ static int16_t clientID 		 = -1;
 static uint8_t prio 			 = 255;
 static uint32_t broadcastAddress = 0;
 static uint8_t initialized 		 = 0;
-static struct addrinfo = {AI_PASSIVE; AF_INET; SOCK_UDP; 0; 14;	"CLIENT"; 0; 0};
 
 void init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
