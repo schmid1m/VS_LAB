@@ -408,3 +408,30 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     free(bitstream);
     return SUCCESS;
 }
+
+uint8_t free_msg(msg* packet)
+{
+    // is packet pointer valid?
+    if(NULL == packet)
+    {
+        return ERROR;
+    }
+    // is header pointer valid?
+    if(NULL == packet->header)
+    {
+        return ERROR;
+    }
+    else
+    {
+        //delete valid header pointer
+        free(packet->header);
+        packet->header = NULL;
+    }
+    if(packet->data != NULL)
+    {
+        free(packet->data);
+        packet->data = NULL;
+    }
+    free(packet);
+    packet = NULL;
+}
