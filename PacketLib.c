@@ -413,7 +413,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ret_val;
     }
 
-	target_addr.sin_addr.s_addr = target_ip;
+    target_addr.sin_addr.s_addr = inet_addr(target_ip);
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 
     uint8_t* bitstream = malloc(packet_length);
@@ -422,7 +422,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 
 	/* use socket-function sendto(...) */
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
-    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr)){
+    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, INET_ADDRSTRLEN)){
         free(bitstream);
         return ERR_SEND_ERROR;
     }
