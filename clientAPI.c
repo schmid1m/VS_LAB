@@ -61,7 +61,6 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 {
 	msg temp_msg;
-	uint8_t error_code;
 
 	if(!initialized) return ERR_NO_INIT;
 
@@ -79,16 +78,8 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 	((dat_gp_request*)temp_msg.data)->clientID = clientID;
 	((dat_gp_request*)temp_msg.data)->generator = gp;
 
-	//check packet before sending
-    error_code = check_packet(&temp_msg);
-
-	if(error_code != NO_ERROR)
-	{
-		return error_code;
-	}
-
     error_code = send_msg(&temp_msg,target_server_ip);
-	free(temp_msg.header);
+    free(temp_msg.header);
 	free(temp_msg.data);
 	return error_code;
 }
@@ -96,11 +87,14 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
 {
 	msg tmp_msg;
-	uint8_t error_code;
 
-	if(!initialized) return ERR_NO_INIT;
+    if(!initialized) return ERR_NO_INIT;
 
 	tmp_msg.header = malloc(sizeof(msg_header));
+    if(tmp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
 
 	tmp_msg.header->func = FNC_DECRYPT;
 	tmp_msg.header->length = sizeof(dat_decrypt_request)+((data_len-1)*sizeof(uint16_t));
@@ -111,19 +105,18 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 	tmp_msg.header->version = PROTOCOL_VERSION;
 
 	tmp_msg.data = malloc(tmp_msg.header->length);
-	dat_decrypt_request* tmp_data = (dat_decrypt_request*) tmp_msg.data;
+    if(tmp_msg.data == NULL)
+    {
+        free(tmp_msg.header);
+        return ERR_ALLOC;
+    }
+
+    dat_decrypt_request* tmp_data = (dat_decrypt_request*) tmp_msg.data;
 	tmp_data->blockID= BID;
 	tmp_data->clientID = clientID;
 
     for (uint32_t var = 0; var < data_len; var++) {
         (&(tmp_data->firstElement))[var]=data[var];
-	}
-
-	//check packet before sending
-    error_code = check_packet(&tmp_msg);
-	if(error_code != NO_ERROR)
-	{
-		return error_code;
 	}
 
     error_code = send_msg(&tmp_msg,target_server_ip);
@@ -136,13 +129,21 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 uint8_t send_unlock_req(uint32_t target_server_ip)
 {
 	msg tmp;
-	uint8_t retVal;
 
 	if(!initialized) return ERR_NO_INIT;
 
 	// Allocate memory
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
+    if(tmp.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
     tmp.data = (dat_unlock_request*) malloc(sizeof(dat_unlock_request));
+    if(tmp.data == NULL)
+    {
+        free(tmp_msg.header);
+        return ERR_ALLOC;
+    }
 
 	// Fill header
     tmp.header->priority = prio;
@@ -155,10 +156,6 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 
 	// Fill datafield
     ((dat_unlock_request*)tmp.data)->clientID = (int16_t)clientID;
-
-	// Check message
-    retVal = check_packet(&tmp);
-	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
     retVal = send_msg(&tmp,target_server_ip);
@@ -173,12 +170,17 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
 uint8_t send_brdcst_req()
 {
 	msg tmp;
-	uint8_t retVal;
 
 	if(!initialized) return ERR_NO_INIT;
 
 	// Allocate memory
     tmp.header = (msg_header*) malloc(sizeof(msg_header));
+    if(tmp.header == NULL)
+    {
+        free(tmp_msg.header);
+        return ERR_ALLOC;
+    }
+    tmp.data = NULL;
 
 	// Fill header
     tmp.header->priority = prio;
@@ -187,10 +189,6 @@ uint8_t send_brdcst_req()
     tmp.header->func = FNC_BROADCAST;
     tmp.header->type = MSG_REQUEST;
     tmp.header->length = 0;
-
-	// Check message
-    retVal = check_packet(&tmp);
-	if(retVal != NO_ERROR) return retVal;
 
 	// Send out message
     retVal = send_msg(&tmp,broadcastAddress);
@@ -219,6 +217,10 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
 
 	// Copy ASCII-Chars
     *data = (uint8_t*)malloc(sizeof(uint8_t) * (*data_len));
+    if(*data == NULL)
+    {
+        return ERR_ALLOC;
+    }
     memcpy(*data,&((dat_decrypt_response*)packet->data)->firstElement,*data_len);
 
 	return NO_ERROR;

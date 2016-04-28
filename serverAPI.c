@@ -52,8 +52,13 @@ uint8_t send_gp_rsp(uint32_t target_client_ip)
 	msg temp_msg;
 	uint8_t error_code;
 
+    temp_msg.data = NULL;
 	temp_msg.header = malloc(sizeof(msg_header));
-	temp_msg.data = NULL;
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    temp_msg.data = NULL;
 
 	temp_msg.header->func = FNC_GP;
 	temp_msg.header->length = 0;
@@ -62,14 +67,6 @@ uint8_t send_gp_rsp(uint32_t target_client_ip)
 	temp_msg.header->reserved = VALUE_RESERVED;
 	temp_msg.header->type = MSG_RESPONSE;
 	temp_msg.header->version = PROTOCOL_VERSION;
-
-	//check packet before sending
-	error_code = check_packet(&temp_msg);
-
-	if(error_code != NO_ERROR)
-	{
-		return error_code;
-	}
 
 	error_code = send_msg(&temp_msg,target_client_ip);
 	free(temp_msg.header);
@@ -82,6 +79,10 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
 	uint8_t error_code;
 
 	tmp_msg.header = malloc(sizeof(msg_header));
+    if(tmp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
 
 	tmp_msg.header->func = FNC_DECRYPT;
 	tmp_msg.header->length = sizeof(dat_decrypt_response)+((data_len-1)*sizeof(uint8_t));
@@ -92,19 +93,17 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
 	tmp_msg.header->version = PROTOCOL_VERSION;
 
 	tmp_msg.data = malloc(tmp_msg.header->length);
-	dat_decrypt_response* tmp_data = (dat_decrypt_response*) tmp_msg.data;
+    if(tmp_msg.data == NULL)
+    {
+        free(tmp_msg.header);
+        return ERR_ALLOC;
+    }
+    dat_decrypt_response* tmp_data = (dat_decrypt_response*) tmp_msg.data;
 	tmp_data->blockID= BID;
 	tmp_data->clientID = clientID;
 
 	for (uint32_t var = 0; var < data_len; var++) {
 		(&(tmp_data->firstElement))[var]=data[var];
-	}
-
-	//check packet before sending
-    error_code = check_packet(&tmp_msg);
-	if(error_code != NO_ERROR)
-	{
-		return error_code;
 	}
 
     error_code = send_msg(&tmp_msg,target_client_ip);

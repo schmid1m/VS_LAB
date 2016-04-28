@@ -77,6 +77,17 @@ int get_mode(void *data){
 uint8_t check_packet(msg* packet)
 {
     FID msg_type;
+
+    // check for valid pointers
+    if((NULL == packet) || (NULL == packet->header))
+    {
+        return ERR_INVALID_PTR;
+    }
+    if((NULL == packet->data) && (packet->header->length != 0))
+    {
+        return ERR_INVALID_PTR;
+    }
+
     // ---- check header fields on their own ----
     // check packet length
     if(packet->header->length > sizeof(msg_header))
@@ -229,6 +240,16 @@ uint8_t check_packet(msg* packet)
 
 FID get_msg_type(msg* packet)
 {
+    // check for valid pointers
+    if((NULL == packet) || (NULL == packet->header))
+    {
+        return UNKNOWN;
+    }
+    if((NULL == packet->data) && (packet->header->length != 0))
+    {
+        return UNKNOWN;
+    }
+
     if (packet->header->type == MSG_ERROR)
     {
         return ERROR_RSP;
@@ -350,7 +371,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 				// no request data?
 				break;
 		case BROADCAST_RSP:
-				packet->data = calloc(1, sizeof(dat_broadcast_response));
 				break;
 		case STATUS_REQ:
 				// no data?
@@ -386,16 +406,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-    // check for valid pointers
-    if((NULL == packet) || (NULL == packet->header))
-    {
-        return ERR_INVALID_PTR;
-    }
-    if((NULL == packet->data) && (packet->header->length != 0))
-    {
-        return ERR_INVALID_PTR;
-    }
-
+    // check for invalid pointers also done here
     uint8_t ret_val = check_packet(packet);
     if(ret_val != NO_ERROR)
     {
@@ -410,6 +421,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     memcpy((void*)bitstream, (void*)packet->data, packet->header->length);
 
 	/* use socket-function sendto(...) */
+    //        sendto(int_fd,buf,size,flags,addr,addr_len)
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr)){
         free(bitstream);
         return ERR_SEND_ERROR;
