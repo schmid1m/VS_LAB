@@ -232,7 +232,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	/* socket-function recv(...);
 	 * packet->header = malloc(...);
 	 * packet->header->_____ = ______;
-	 * packet->data = malloc("abhï¿½ngig von packettype aus header")
+	 * packet->data = malloc("abhängig von packettype aus header")
 	 * *src_ip = "aus socket-funktion"; */
 
 	return check_packet(packet);
@@ -304,16 +304,7 @@ FID get_msg_type(msg* packet)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-	/* setup network info */
-	///	TODO: take the info from ONE CENTRAL library-socket to get the correct IP etc...
-	size_t packet_length = sizeof(msg_header) + packet->header->length;
-	struct sockaddr_in sa;
-	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
-	int client_socket = 0;
-	/* use socket-function sendto(...) */
-	if(sendto(client_socket, packet, packet_length, 0, sa)){
-		return -1;
-	}
+	/* socket-function sendto(...) */
 
 	return SUCCESS;
 }
