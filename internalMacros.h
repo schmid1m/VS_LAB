@@ -12,18 +12,6 @@
 /// \defgroup internal Macros for internal use only
 /// @{
 
-// client socket
-static int clScktDscp = 0; // socket descriptor
-static struct sockaddr_in	client;	// address information
-static struct sockaddr_in	client_target;	// address information
-#define SERVER_PORT		11111
-#define SERVER_UNICAST_ADDRESS	"141.47.69.14"
-
-// server socket
-static int svScktDscp = 0; // socket descriptor
-static struct sockaddr_in	server;	// address information
-static struct sockaddr_in	server_target;	// address information
-
 // Protocol specific definitions
 #define HEADER_LENGTH                 8 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields

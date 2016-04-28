@@ -13,7 +13,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-
+//#include <arpa/inet.h>
 #include "PacketLib.h"
 #include "Macros.h"
 #include "internalMacros.h"
@@ -304,12 +304,6 @@ FID get_msg_type(msg* packet)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-	// check for valid pointer
-	if(NULL == packet)
-	{
-		return -1;
-	}
-
 	/* setup network info */
 	///	TODO: take the info from ONE CENTRAL library-socket to get the correct IP etc...
 	size_t packet_length = sizeof(msg_header) + packet->header->length;

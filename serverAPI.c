@@ -10,41 +10,10 @@
 #include "commonAPI.h"
 #include "serverAPI.h"
 #include <stdlib.h>
-#include <arpa/inet.h>
 
 int init_server(/*socket, Server IP, testserver IP*/)
 {
-	// init socket //
-	svScktDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (svScktDscp < 0)
-	{
-		//initialized = 0; --> sollte man vielleicht hier auch tun?
-		return ERROR;
-	}
-
-	// initialize server structure
-	server.sin_family = AF_INET;					// Ethernet
-	server.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
-	server.sin_port = htons(SERVER_PORT);						// set vslab server port
-	memset(&(server.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
-
-	// initialize client structure --> all information will be populated by recvform() calls
-	server_target.sin_family = AF_INET;			// Ethernet
-	server_target.sin_addr.s_addr = inet_addr(INADDR_ANY);
-	server_target.sin_port = htons(SERVER_PORT);
-	memset(&(server_target.sin_zero), 0x00, 8);
-	// bind socket
-	if (bind(svScktDscp, (struct sockaddr *)&server, sizeof(struct sockaddr)) < 0)
-	{
-		close(svScktDscp);
-		//initialized = 0;
-		return ERROR;
-	}
-
 	return SUCCESS;
-
-	// TODO: deinit_server schreiben --> socket schließen!
-
 }
 
 uint8_t send_gp_rsp(uint32_t target_client_ip)
