@@ -79,7 +79,7 @@ uint8_t check_packet(msg* packet)
     FID msg_type;
     // ---- check header fields on their own ----
     // check packet length
-    if(packet->header->length > MAX_PACKET_LENGTH)
+    if(packet->header->length > sizeof(msg_header))
     {
         return ERR_PACKETLENGTH;
     }
@@ -132,38 +132,38 @@ uint8_t check_packet(msg* packet)
             }
             break;
         case GP_REQ:
-            if(packet->header->length != 4)
+            if(packet->header->length != sizeof(dat_gp_request))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case DECRYPT_REQ:
-            if((packet->header->length < 6) ||
+            if((packet->header->length < sizeof(dat_decrypt_request)) ||
                ((packet->header->length % 2) != 1))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case DECRYPT_RSP:
-            if(packet->header->length < 5)
+            if(packet->header->length < sizeof(dat_decrypt_response))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case UNLOCK_REQ:
-            if(packet->header->length != 2)
+            if(packet->header->length != sizeof(dat_unlock_request))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case STATUS_RSP:
-            if(packet->header->length != 8)
+            if(packet->header->length != sizeof(dat_status_response))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case ERROR_RSP:
-            if(packet->header->length != 3)
+            if(packet->header->length != sizeof(error))
             {
                 return ERR_PACKETLENGTH;
             }
