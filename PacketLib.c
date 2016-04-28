@@ -307,12 +307,10 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	// check for valid pointer
 	if(NULL == packet)
 	{
-		return ERROR;
+		return -1;
 	}
 
-	target_addr.sin_addr.s_addr = target_ip;
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
-
 	/* use socket-function sendto(...) */
 	if(packet_length != sendto(socketDscp, packet, packet_length, 0, target_addr)){
 		return ERROR;
