@@ -311,7 +311,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	inet_pton(AF_INET, "10.12.110.57", &(sa.sin_addr)); // IPv4
 	int client_socket = 0;
 	/* use socket-function sendto(...) */
-	if(packet_length != sendto(client_socket, packet, packet_length, 0, sa)){
+	if(sendto(client_socket, packet, packet_length, 0, sa)){
 		return -1;
 	}
 
