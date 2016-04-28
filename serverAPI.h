@@ -77,48 +77,44 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, uint32_t target_client_ip
 
 /// \brief Extract the generator polynome
 /// Extract the generator polynome from the packet
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : the packet to extract
 /// \param[out] gp : the generator polynome
 /// \param[out] CID : the client ID
 /// \param[out] prio : the priority of the client
-/// \param[out] src_client_ip : the IP of the source client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio, uint32_t* src_client_ip);
+uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio);
 
 /// \brief Extract data to decrypt
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : the packet to extract
 /// \param[out] CID : the client ID
 /// \param[out] BID : the Block ID of this Block
 /// \param[out] data : the data to decrypt
 /// \param[out] data_len : the amount of data words to decrypt
-/// \param[out] src_client_ip : the IP of the source client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t* data, uint32_t* data_len, uint32_t* src_client_ip);
+uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t* data, uint32_t* data_len);
 
 /// \brief Extract the unlock command
 /// extract the command to unlock the server
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : the packet to extract
 /// \param[out] CID : the client ID
-/// \param[out] src_client_ip : the IP of the source client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_unlock_req(msg* packet, uint16_t* CID, uint32_t* src_client_ip);
+uint8_t extract_unlock_req(msg* packet, uint16_t* CID);
 
 /// \brief Extract a broadcast request
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : the packet to extract
-/// \param[out] src_client_ip : the IP of the source client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_brdcst_req(msg* packet, uint32_t* src_client_ip);
+uint8_t extract_brdcst_req(msg* packet);
 
 /// \brief Extract a status request
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \param[in] packet : the packet to extract
 /// \return The error code that occurred.
 /// @sa macros
