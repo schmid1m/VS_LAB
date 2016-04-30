@@ -21,7 +21,7 @@ static struct sockaddr_in	my_addr;		// my own address information
 static struct sockaddr_in	target_addr;	// target address information
 
 // Protocol specific definitions
-#define HEADER_LENGTH                 8 ///< The header length in bytes
+#define HEADER_LENGTH                 9 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields
 #define MAX_PACKET_LENGTH         60000 ///< The maximal packet length (60kB)
 #define NO_BLOCK_ID                   0 ///< No block ID is present
