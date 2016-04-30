@@ -15,11 +15,6 @@
 #define SERVER_PORT		11111
 #define SERVER_UNICAST_ADDRESS	"141.47.69.14"
 
-// server socket
-static int socketDscp = 0; // socket descriptor
-static struct sockaddr_in	my_addr;		// my own address information
-static struct sockaddr_in	target_addr;	// target address information
-
 // Protocol specific definitions
 #define HEADER_LENGTH                 9 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields

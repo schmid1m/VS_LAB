@@ -73,13 +73,34 @@ int get_mode(void *data){
 }
 */
 
+uint8_t check_pointers(msg* packet)
+{
+    // check for valid pointers
+    if((NULL == packet) || (NULL == packet->header))
+    {
+        return ERR_INVALID_PTR;
+    }
+    if((NULL == packet->data) && (packet->header->length != 0))
+    {
+        return ERR_INVALID_PTR;
+    }
+    return NO_ERROR;
+}
 
 uint8_t check_packet(msg* packet)
 {
     FID msg_type;
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
     // ---- check header fields on their own ----
     // check packet length
-    if(packet->header->length > MAX_PACKET_LENGTH)
+    if(packet->header->length > sizeof(msg_header))
     {
         return ERR_PACKETLENGTH;
     }
@@ -132,38 +153,38 @@ uint8_t check_packet(msg* packet)
             }
             break;
         case GP_REQ:
-            if(packet->header->length != 4)
+            if(packet->header->length != sizeof(dat_gp_request))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case DECRYPT_REQ:
-            if((packet->header->length < 6) ||
+            if((packet->header->length < sizeof(dat_decrypt_request)) ||
                ((packet->header->length % 2) != 1))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case DECRYPT_RSP:
-            if(packet->header->length < 5)
+            if(packet->header->length < sizeof(dat_decrypt_response))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case UNLOCK_REQ:
-            if(packet->header->length != 2)
+            if(packet->header->length != sizeof(dat_unlock_request))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case STATUS_RSP:
-            if(packet->header->length != 8)
+            if(packet->header->length != sizeof(dat_status_response))
             {
                 return ERR_PACKETLENGTH;
             }
             break;
         case ERROR_RSP:
-            if(packet->header->length != 3)
+            if(packet->header->length != sizeof(error))
             {
                 return ERR_PACKETLENGTH;
             }
@@ -229,6 +250,14 @@ uint8_t check_packet(msg* packet)
 
 FID get_msg_type(msg* packet)
 {
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return UNKNOWN;
+    }
+
     if (packet->header->type == MSG_ERROR)
     {
         return ERROR_RSP;
@@ -296,22 +325,22 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	int result;
 	msg_header* recvMsg;
 
-	// allocate memory for header, is the same for every packet type
-	packet->header = calloc(1, sizeof(msg_header));
+    // check for valid pointer
+    if((NULL == packet) || (NULL == src_ip))
+    {
+        return ERROR;
+    }
+
+    // allocate header memory is the same for every packet type
+    packet->header = calloc(1, sizeof(msg_header));
 
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
 	// we deal only with ipv4 but safety first ;-) --> think check is not neccesary
 	socklen_t addr_length = sizeof(struct sockaddr);
 
-	// check for valid pointer
-	if((NULL == packet) || (NULL == src_ip))
-	{
 		// cleanup
 		free(src_addr);
-		return ERROR;
-	}
-
 	// allocate enough packet buffer
 	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
 	if(NULL == buffer)
@@ -363,19 +392,50 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
 {
-	// check for valid pointer
-	if(NULL == packet)
-	{
-		return ERROR;
-	}
+    // check for invalid pointers also done here
+    uint8_t ret_val = check_packet(packet);
+    if(ret_val != NO_ERROR)
+    {
+        return ret_val;
+    }
 
-	target_addr.sin_addr.s_addr = target_ip;
+    target_addr.sin_addr.s_addr = inet_addr(target_ip);
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 
-	/* use socket-function sendto(...) */
-	if(packet_length != sendto(socketDscp, packet, packet_length, 0, target_addr)){
-		return ERROR;
-	}
+    uint8_t* bitstream = malloc(packet_length);
+    memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
+    memcpy((void*)bitstream, (void*)packet->data, packet->header->length);
 
-	return SUCCESS;
+	/* use socket-function sendto(...) */
+    //        sendto(int_fd,buf,size,flags,addr,addr_len)
+    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, INET_ADDRSTRLEN)){
+        free(bitstream);
+        return ERR_SEND_ERROR;
+    }
+
+    free(bitstream);
+    return NO_ERROR;
+}
+
+uint8_t free_msg(msg* packet)
+{
+    uint8_t retVal;
+
+    retVal = check_pointers(packet);
+    if(retVal != NO_ERROR)
+    {
+        return retVal;
+    }
+
+    //delete header pointer
+    free(packet->header);
+    packet->header = NULL;
+    if(packet->data != NULL)
+    {
+        free(packet->data);
+        packet->data = NULL;
+    }
+    free(packet);
+    packet = NULL;
+    return NO_ERROR;
 }

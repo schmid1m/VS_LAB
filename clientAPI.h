@@ -62,7 +62,6 @@ uint8_t send_brdcst_req();
 /// Extract the data from the polynome extract response
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_gp_rsp(msg* packet);
@@ -74,7 +73,6 @@ uint8_t extract_gp_rsp(msg* packet);
 /// \param[out] BID : the block ID of the decrypted packet
 /// \param[out] data : the decrypted data
 /// \param[out] data_len : the length of the decrypted data
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len);
@@ -83,7 +81,6 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
 /// This extracts the unlock confirmation
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_unlock_rsp(msg* packet);
@@ -91,7 +88,6 @@ uint8_t extract_unlock_rsp(msg* packet);
 /// \brief This extracts broadcast response
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_brdcst_rsp(msg* packet);
@@ -102,7 +98,6 @@ uint8_t extract_brdcst_rsp(msg* packet);
 /// \param[in] packet : the packet to extract
 /// \param[out] error_code : The error code that occurred
 /// \param[out] BID : the block ID of the decrypted packet (if present)
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
