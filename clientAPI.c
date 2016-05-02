@@ -58,6 +58,11 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	// TODO: deinit_client schreiben und den Socket schließen ;-)
 }
 
+int deinit_client()
+{
+    return SUCCESS;
+}
+
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 {
 	msg temp_msg;

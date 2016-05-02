@@ -21,8 +21,13 @@
 /// \param p_cID : the client ID
 /// \param p_prio : the client priority
 /// \param p_bca : the broadcast address
-/// \return Error code planed as return value
+/// \return Error or SUCCESS
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca);
+
+/// \brief Deinitializes the client lib
+/// @author <ADD HERE>
+/// \return Error or SUCCESS
+int deinit_client();
 
 /// \brief Send a generator polynome
 /// This function sets a generator polynome to lock a server

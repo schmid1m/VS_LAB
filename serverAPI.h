@@ -18,8 +18,13 @@
 
 /// \brief Initiates the lib with the permanent server data
 /// @author <Author Name Here>
-/// \return Error code planed as return value
+/// \return Error or SUCCESS
 int init_server(/*socket, Server IP, testserver IP*/);
+
+/// \brief Deinitializes the server lib
+/// @author <ADD HERE>
+/// \return Error or SUCCESS
+int deinit_server();
 
 /// \brief Send a generator polynome response
 /// Confirm the successfull setting of the generator polynome

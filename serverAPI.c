@@ -51,6 +51,11 @@ int init_server(/*socket, Server IP, testserver IP*/)
 
 }
 
+int deinit_server()
+{
+    return SUCCESS;
+}
+
 uint8_t send_gp_rsp(uint32_t target_client_ip)
 {
 	msg temp_msg;
@@ -197,7 +202,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 
     temp_msg.data = (void*) dat;
 
-    // TODO error_code = send_msg(&temp_msg,target_client_ip);
+    //error_code = send_msg(&temp_msg,target_client_ip);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;
@@ -302,7 +307,7 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
 
     for(uint32_t index = 0; index < *data_len; index++)
     {
-        *data[index] = (uint16_t*)(&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
+        *data[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
 
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */
