@@ -14,6 +14,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 /// \defgroup structs Structures
 /// Data Structures for internal use

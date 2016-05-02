@@ -278,7 +278,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     // check for valid pointer
     if((NULL == packet) || (NULL == src_ip))
     {
-        return ERROR;
+        return ERR_NO_INIT;
     }
 
     // allocate header memory is the same for every packet type
@@ -308,7 +308,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 		// cleanup
 		free(src_addr);
 		free(buffer);
-		return ERROR;
+        return ERR_NO_PACKET;
 	}
 
 	// cast packet to take a look into the header

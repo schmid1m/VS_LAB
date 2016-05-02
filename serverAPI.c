@@ -11,7 +11,7 @@
 #include "serverAPI.h"
 #include <stdlib.h>
 #include <string.h>
-#include <PacketLib.h>
+#include "PacketLib.h"
 
 // server socket
 static uint8_t initialized 		 = 0;
@@ -23,7 +23,7 @@ int init_server()
         return SUCCESS;
     }
 
-	// init socket //
+    // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
 	{
@@ -37,12 +37,13 @@ int init_server()
 	my_addr.sin_port = htons(SERVER_PORT);						// set vslab server port
     memset(&(my_addr.sin_zero), 0x00, 8);                   	// set remaining bytes to 0x0
 
-	// initialize target structure --> all information will be populated by recvform() calls
+    // initialize target structure --> all information will be populated by recvform() calls
 	target_addr.sin_family = AF_INET;			// Ethernet
-	target_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-	target_addr.sin_port = htons(SERVER_PORT);
-	memset(&(target_addr.sin_zero), 0x00, 8);
-	// bind socket
+    target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    target_addr.sin_port = htons(SERVER_PORT);
+    memset(&(target_addr.sin_zero), 0x00, 8);
+
+    // bind socket
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
         shutdown(socketDscp, 2);
