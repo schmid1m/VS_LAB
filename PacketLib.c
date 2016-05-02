@@ -23,60 +23,6 @@ int socketDscp = 0;                       // socket descriptor
 struct sockaddr_in	my_addr;		// my own address information
 struct sockaddr_in	target_addr;	// target address information
 
-/*
-int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
-	msg_header *msgHeader = malloc(sizeof(msg_header)+sizeof(dat_broadcast_response));		// storage for the complete response
-	dat_broadcast_response *msgData = (dat_broadcast_response*)(msgHeader+sizeof(msg_header));	// get the pointer to the data fields
-
-	// fill the header
-	msgHeader->func = FNC_BROADCAST;
-	msgHeader->length = sizeof(msg_header)+sizeof(dat_broadcast_response);
-	msgHeader->mode = MODE_SERVER;
-	msgHeader->priority = 0;																// highest priority
-	msgHeader->type = MSG_RESPONSE;
-	msgHeader->version = PROTOCOL_VERSION;
-
-	// fill the data field
-	msgData->serverIP = ntohs(clientAddress->sin_addr.s_addr);
-
-	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
-	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
-		// error
-		free((void*)msgHeader);
-		return -1;
-	}else{
-		// no error
-        free((void*)msgHeader);
-		return 1;
-	}
-}
-
-
-/// @brief get the priority from a client
-/// @param[out] priority 0...255
-/// @param[in] received data on socket
-int get_priority(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->priority;
-}
-
-/// @brief get the protocol version of a received packet
-/// @param[out] protocol version
-/// @param[in] received data on socket
-int get_protocol_version(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->version;
-}
-
-/// @brief get the mode of a received packet
-/// @param[out] mode of received packet
-/// @param[in] received data on socket
-int get_mode(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->mode;
-}
-*/
-
 uint8_t check_pointers(msg* packet)
 {
     // check for valid pointers
@@ -444,4 +390,14 @@ uint8_t free_msg(msg* packet)
     free(packet);
     packet = NULL;
     return NO_ERROR;
+}
+
+uint32_t parseIPV4string(char* ipAddress) {
+  uint32_t ipbytes[4];
+  if(sscanf(ipAddress, "%uhh.%uhh.%uhh.%uhh", &ipbytes[3], &ipbytes[2], &ipbytes[1], &ipbytes[0]) == 4)
+  {
+      return ipbytes[0] | ipbytes[1] << 8 | ipbytes[2] << 16 | ipbytes[3] << 24;
+  }
+  else
+      return 0;
 }

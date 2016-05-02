@@ -175,6 +175,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
     msg temp_msg;
     uint8_t error_code;
     dat_status_response* dat;
+    uint32_t target_client_ip = parseIPV4string(SERVER_UNICAST_ADDRESS);
 
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
@@ -202,7 +203,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 
     temp_msg.data = (void*) dat;
 
-    //error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;

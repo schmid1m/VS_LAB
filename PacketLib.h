@@ -126,23 +126,12 @@ uint8_t check_packet(msg* packet);
 /// @sa macros
 uint8_t send_msg(msg* packet, uint32_t target_ip);
 
+/// \brief Parse an IP to long
+/// @author Michel Schmidt
+/// \param[in] ipAddress : The IP address as string
+/// \return The IP as uint32_t; 0 for failure
+uint32_t parseIPV4string(char* ipAddress);
+
 /// @}
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
-
-/*
-/// @brief Send a response to a broadcast from a client
-/// @param[in] socketdesc : socket descriptor of the socket that should be used
-/// @param[in] serverSocket : pointer to the server socket struct
-/// @param[in] clientAddress : pointer to the client socket struct
-/// \return ERROR if sending message isn't successful otherwise you'll get SUCCESS
-int server_broadcast_rsp(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
-*/
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
 
 #endif // PACKET_LIB_H
