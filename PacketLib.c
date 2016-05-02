@@ -340,7 +340,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
-	// we deal only with ipv4 but safety first ;-) --> think check is not neccesary
+	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
 	socklen_t addr_length = sizeof(struct sockaddr);
 
 		// cleanup
@@ -403,19 +403,23 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ret_val;
     }
 
-    // TODO target_addr.sin_addr.s_addr = inet_addr(target_ip);
+    // TODO
+    target_addr.sin_addr.s_addr = htonl(target_ip);
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 
+	/*  */
     uint8_t* bitstream = malloc(packet_length);
+    /* copy message to the bitstream */
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
-    memcpy((void*)bitstream, (void*)packet->data, packet->header->length);
+    memcpy((void*)bitstream[sizeof(msg_header)], (void*)packet->data, packet->header->length);
 
 	/* use socket-function sendto(...) */
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
-    // TODO if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, INET_ADDRSTRLEN)){
-    //    free(bitstream);
-    //    return ERR_SEND_ERROR;
-    //}
+    // TODO
+    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, sizeof(struct sockaddr))){
+        free(bitstream);
+        return ERROR;
+    }
 
     free(bitstream);
     return NO_ERROR;
