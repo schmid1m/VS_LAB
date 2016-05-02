@@ -52,6 +52,8 @@ int init_server()
 		return ERROR;
 	}
 
+    initialized = 1;
+
 	return SUCCESS;
 }
 

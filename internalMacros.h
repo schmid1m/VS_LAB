@@ -14,6 +14,8 @@
 
 #define SERVER_PORT		11111
 #define SERVER_UNICAST_ADDRESS	"141.47.69.14"
+#define BROADCAST_ADDRESS "127.0.0.1"
+
 
 // Protocol specific definitions
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields

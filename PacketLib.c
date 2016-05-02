@@ -161,7 +161,6 @@ uint8_t check_packet(msg* packet)
     }
     else
     {
-        return ERR_INVALIDMODE;
     }
 
     // ---- Check data field ----
@@ -281,9 +280,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
         return ERR_NO_INIT;
     }
 
-    // allocate header memory is the same for every packet type
-    packet->header = calloc(1, sizeof(msg_header));
-
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
 	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
@@ -312,7 +308,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	// cast packet to take a look into the header
 	recvMsg = (msg_header*)buffer;
 	// check for valid length field
-	if(recvMsg->length == 0)
+    if(result != (sizeof(msg_header) + recvMsg->length))
 	{
 		packet->header = NULL;
 		packet->data = NULL;
@@ -322,11 +318,20 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 		return ERR_NO_PACKET;
 	}else
 	{
-		// allocate msg data memory
-		packet->header = calloc(1, (recvMsg->length-sizeof(msg_header)));
+        // allocate header memory is the same for every packet type
+        packet->header = calloc(1, sizeof(msg_header));
+
+        // allocate msg data memory
+        packet->data = malloc((result - sizeof(msg_header)));
+        if(packet->data == NULL)
+        {
+            free(src_addr);
+            free(buffer);
+            return ERR_ALLOC;
+        }
 		// copy data
 		memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
-        memcpy(packet->data, &buffer[sizeof(msg_header)], (recvMsg->length-sizeof(msg_header)));
+        memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
         *src_ip = ntohl(src_addr->sin_addr.s_addr);
 	}
 
