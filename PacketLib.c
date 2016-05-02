@@ -405,7 +405,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 
     // TODO
     target_addr.sin_addr.s_addr = htonl(target_ip);
-	size_t packet_length = sizeof(msg_header) + packet->header->length;
+    ssize_t packet_length = sizeof(msg_header) + packet->header->length;
 
 	/*  */
     uint8_t* bitstream = malloc(packet_length);
@@ -416,7 +416,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 	/* use socket-function sendto(...) */
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
     // TODO
-    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, sizeof(struct sockaddr))){
+    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
         free(bitstream);
         return ERROR;
     }
