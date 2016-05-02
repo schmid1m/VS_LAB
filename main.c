@@ -48,11 +48,11 @@ int main(){
     data->generator = gp;
 
 	// Create a bitstream to send
-    uint32_t *msg_send = malloc(HEADER_LENGTH + my_msg.header->length);
+    uint32_t *msg_send = malloc(sizeof(msg_header) + my_msg.header->length);
     // Copy the header
-    memcpy(msg_send, my_msg.header, HEADER_LENGTH);
+    memcpy(msg_send, my_msg.header, sizeof(msg_header));
     // Copy the data
-    memcpy((void*)msg_send + HEADER_LENGTH, data, my_msg.header->length);
+    memcpy((void*)msg_send + sizeof(msg_header), data, my_msg.header->length);
 
 	// Free allocated memory
     free(my_msg.header);
@@ -63,19 +63,19 @@ int main(){
 	// Print a copy of the sent data
     printf("%x\n", *(uint32_t*)((void*)msg_send));
     printf("%x\n", *(uint32_t*)((void*)msg_send + sizeof(uint32_t)));
-    printf("%x\n\n\n\a", *(uint32_t*)((void*)msg_send + HEADER_LENGTH));
+    printf("%x\n\n\n\a", *(uint32_t*)((void*)msg_send + sizeof(msg_header)));
     
     // "read" the data
     
     // Allocate header memory
     my_msg.header = malloc(sizeof(msg_header));
     // Copy header data
-    memcpy(my_msg.header, msg_send, HEADER_LENGTH);
+    memcpy(my_msg.header, msg_send, sizeof(msg_header));
 
     // Allocate data memory (length taken from data)
     my_msg.data = (void*)malloc(sizeof(my_msg.header->length));
     // Copy data
-    memcpy(my_msg.data, ((const void*)msg_send) + HEADER_LENGTH, my_msg.header->length);
+    memcpy(my_msg.data, ((const void*)msg_send) + sizeof(msg_header), my_msg.header->length);
 
     // Print received header data
     printf("header: %x\n",   my_msg.header->priority);

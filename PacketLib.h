@@ -11,13 +11,17 @@
 
 #include <stdint.h>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 /// \defgroup structs Structures
 /// Data Structures for internal use
 /// @{
 
-static int socketDscp = 0;                  // socket descriptor
-static struct sockaddr_in	my_addr;		// my own address information
-static struct sockaddr_in	target_addr;	// target address information
+extern int socketDscp;                      // socket descriptor
+extern struct sockaddr_in	my_addr;		// my own address information
+extern struct sockaddr_in	target_addr;	// target address information
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.

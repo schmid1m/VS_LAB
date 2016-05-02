@@ -10,7 +10,8 @@
 #include "commonAPI.h"
 #include "serverAPI.h"
 #include <stdlib.h>
-#include <arpa/inet.h>
+#include <string.h>
+#include <PacketLib.h>
 
 // server socket
 static uint8_t initialized 		 = 0;
@@ -196,7 +197,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 
     temp_msg.data = (void*) dat;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    // TODO error_code = send_msg(&temp_msg,target_client_ip);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;
@@ -205,7 +206,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client_ip, FID fid)
 {
     msg temp_msg;
-    uint8_t error_code;
+    uint8_t rsp_error_code;
     error* dat;
 
     temp_msg.header = malloc(sizeof(msg_header));
@@ -220,7 +221,26 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client
         return ERR_ALLOC;
     }
 
-    temp_msg.header->func = FNC_BROADCAST;
+    switch(fid)
+    {
+        case GP_REQ:
+            temp_msg.header->func = FNC_GP;
+            break;
+        case DECRYPT_REQ:
+            temp_msg.header->func = FNC_DECRYPT;
+            break;
+        case UNLOCK_REQ:
+            temp_msg.header->func = FNC_UNLOCK;
+            break;
+        case BROADCAST_REQ:
+            temp_msg.header->func = FNC_BROADCAST;
+            break;
+        default:
+            free(temp_msg.header);
+            return ERR_NOSUCHFUNCTION;
+    }
+
+
     temp_msg.header->length = 0;
     temp_msg.header->mode = MODE_SERVER;
     temp_msg.header->priority = SERVER_PRIO;
@@ -228,15 +248,15 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client
     temp_msg.header->type = MSG_RESPONSE;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    dat->errCode = error_code;
+    dat->errCode = err_code;
     dat->blockID = blk_ID;
 
     temp_msg.data = (void*) dat;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    rsp_error_code = send_msg(&temp_msg,target_client_ip);
     free(temp_msg.header);
     free(temp_msg.data);
-    return error_code;
+    return rsp_error_code;
 }
 
 uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio)
@@ -276,13 +296,13 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
         return ERR_ALLOC;
     }
 
-    data_len = packet->header->length - (2 * sizeof(uint16_t));
+    *data_len = packet->header->length - (2 * sizeof(uint16_t));
     *CID = ((dat_decrypt_request*)(packet->data))->clientID;
     *BID = ((dat_decrypt_request*)(packet->data))->blockID;
 
-    for(uint32_t index = 0; index < data_len; index++)
+    for(uint32_t index = 0; index < *data_len; index++)
     {
-        data[index] = &(((dat_decrypt_request*)(packet->data))->firstElement)[index];
+        *data[index] = (uint16_t*)(&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
 
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */

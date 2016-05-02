@@ -16,7 +16,6 @@
 #define SERVER_UNICAST_ADDRESS	"141.47.69.14"
 
 // Protocol specific definitions
-#define HEADER_LENGTH                 9 ///< The header length in bytes
 #define VALUE_RESERVED                0 ///< Standard value for reserved fields
 #define MAX_PACKET_LENGTH         60000 ///< The maximal packet length (60kB)
 #define NO_BLOCK_ID                   0 ///< No block ID is present

@@ -9,15 +9,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-
 
 #include "PacketLib.h"
 #include "Macros.h"
 #include "internalMacros.h"
 #include "commonAPI.h"
+
+int socketDscp = 0;                       // socket descriptor
+struct sockaddr_in	my_addr;		// my own address information
+struct sockaddr_in	target_addr;	// target address information
 
 /*
 int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
@@ -378,8 +382,8 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 		packet->header = calloc(1, (recvMsg->length-sizeof(msg_header)));
 		// copy data
 		memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
-		memcpy(packet->data, buffer[sizeof(msg_header)], (recvMsg->length-sizeof(msg_header)));
-		src_ip = ntohl(src_addr->sin_addr.s_addr);
+        memcpy(packet->data, &buffer[sizeof(msg_header)], (recvMsg->length-sizeof(msg_header)));
+        *src_ip = ntohl(src_addr->sin_addr.s_addr);
 	}
 
 	// cleanup
@@ -399,7 +403,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ret_val;
     }
 
-    target_addr.sin_addr.s_addr = inet_addr(target_ip);
+    // TODO target_addr.sin_addr.s_addr = inet_addr(target_ip);
 	size_t packet_length = sizeof(msg_header) + packet->header->length;
 
     uint8_t* bitstream = malloc(packet_length);
@@ -408,10 +412,10 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 
 	/* use socket-function sendto(...) */
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
-    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, INET_ADDRSTRLEN)){
-        free(bitstream);
-        return ERR_SEND_ERROR;
-    }
+    // TODO if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, target_addr, INET_ADDRSTRLEN)){
+    //    free(bitstream);
+    //    return ERR_SEND_ERROR;
+    //}
 
     free(bitstream);
     return NO_ERROR;
