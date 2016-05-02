@@ -2,7 +2,7 @@
 **  File        : serverAPI.h                                **
 **  Version     : 2.4                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -19,7 +19,7 @@
 /// \brief Initiates the lib with the permanent server data
 /// @author Michel Schmidt
 /// \return Error or SUCCESS
-int init_server(/*socket, Server IP, testserver IP*/);
+int init_server();
 
 /// \brief Deinitializes the server lib
 /// @author <ADD HERE>

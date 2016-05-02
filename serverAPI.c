@@ -2,7 +2,7 @@
 **  File        : serverAPI.c                                **
 **  Version     : 2.4                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -16,8 +16,13 @@
 // server socket
 static uint8_t initialized 		 = 0;
 
-int init_server(/*socket, Server IP, testserver IP*/)
+int init_server()
 {
+    if(initialized)
+    {
+        return SUCCESS;
+    }
+
 	// init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
@@ -27,10 +32,10 @@ int init_server(/*socket, Server IP, testserver IP*/)
 	}
 
 	// initialize my own address structure
-	my_addr.sin_family = AF_INET;					// Ethernet
-	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
+    my_addr.sin_family = AF_INET;                               // Ethernet
+    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);                // automatically insert own address
 	my_addr.sin_port = htons(SERVER_PORT);						// set vslab server port
-	memset(&(my_addr.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
+    memset(&(my_addr.sin_zero), 0x00, 8);                   	// set remaining bytes to 0x0
 
 	// initialize target structure --> all information will be populated by recvform() calls
 	target_addr.sin_family = AF_INET;			// Ethernet

@@ -2,7 +2,7 @@
 **  File        : clientAPI.c                                **
 **  Version     : 2.4                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -21,7 +21,12 @@ static uint8_t initialized 		 = 0;
 
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
-	clientID = p_cID;
+    if(initialized)
+    {
+        return SUCCESS;
+    }
+
+    clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
 	initialized = 1; // true

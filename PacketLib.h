@@ -2,7 +2,7 @@
 **  File        : PacketLib.h                                **
 **  Version     : 2.4                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
