@@ -2,7 +2,7 @@
 **  File        : PacketLib.h                                **
 **  Version     : 2.4                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -11,9 +11,17 @@
 
 #include <stdint.h>
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 /// \defgroup structs Structures
 /// Data Structures for internal use
 /// @{
+
+extern int socketDscp;                      // socket descriptor
+extern struct sockaddr_in	my_addr;		// my own address information
+extern struct sockaddr_in	target_addr;	// target address information
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.
@@ -96,6 +104,13 @@ typedef struct msg
 /// Functions for internal use only
 /// @{
 
+/// \brief check_pointers
+/// @author Michel Schmidt
+/// \param packet : the packet pointers to check
+/// \return ERR_INVALID_PTR or NO_ERROR
+/// @sa ERR_INVALID_PTR @sa NO_ERROR
+uint8_t check_pointers(msg* packet);
+
 /// \brief Check a packet for internal errors
 /// @author Michel Schmidt
 /// \param[in] packet : The packet structure
@@ -111,23 +126,12 @@ uint8_t check_packet(msg* packet);
 /// @sa macros
 uint8_t send_msg(msg* packet, uint32_t target_ip);
 
+/// \brief Parse an IP to long
+/// @author Michel Schmidt
+/// \param[in] ipAddress : The IP address as string
+/// \return The IP as uint32_t; 0 for failure
+uint32_t parseIPV4string(char* ipAddress);
+
 /// @}
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
-
-/*
-/// @brief Send a response to a broadcast from a client
-/// @param[in] socketdesc : socket descriptor of the socket that should be used
-/// @param[in] serverSocket : pointer to the server socket struct
-/// @param[in] clientAddress : pointer to the client socket struct
-/// \return ERROR if sending message isn't successful otherwise you'll get SUCCESS
-int server_broadcast_rsp(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
-*/
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
 
 #endif // PACKET_LIB_H

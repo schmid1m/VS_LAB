@@ -36,6 +36,12 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip);
 /// @sa macros
 FID get_msg_type(msg* packet);
 
+/// \brief Deletes a packet structure and its subfields
+/// @author Michel Schmidt
+/// \param packet : the message to delete
+/// \return ERROR if the packet was not valid; SUCCESS if not
+uint8_t free_msg(msg* packet);
+
 /// @}
 
 #endif // VSLAB_COMMON_API_H

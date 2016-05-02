@@ -2,7 +2,7 @@
 **  File        : clientAPI.h                                **
 **  Version     : 2.4                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 02.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -21,7 +21,13 @@
 /// \param p_cID : the client ID
 /// \param p_prio : the client priority
 /// \param p_bca : the broadcast address
-void init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca);
+/// \return Error or SUCCESS
+int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca);
+
+/// \brief Deinitializes the client lib
+/// @author <ADD HERE>
+/// \return Error or SUCCESS
+int deinit_client();
 
 /// \brief Send a generator polynome
 /// This function sets a generator polynome to lock a server
@@ -61,7 +67,6 @@ uint8_t send_brdcst_req();
 /// Extract the data from the polynome extract response
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_gp_rsp(msg* packet);
@@ -73,7 +78,6 @@ uint8_t extract_gp_rsp(msg* packet);
 /// \param[out] BID : the block ID of the decrypted packet
 /// \param[out] data : the decrypted data
 /// \param[out] data_len : the length of the decrypted data
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* data_len);
@@ -82,7 +86,6 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
 /// This extracts the unlock confirmation
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_unlock_rsp(msg* packet);
@@ -90,7 +93,6 @@ uint8_t extract_unlock_rsp(msg* packet);
 /// \brief This extracts broadcast response
 /// @author Philipp Duller
 /// \param[in] packet : the packet to extract
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_brdcst_rsp(msg* packet);
@@ -101,7 +103,6 @@ uint8_t extract_brdcst_rsp(msg* packet);
 /// \param[in] packet : the packet to extract
 /// \param[out] error_code : The error code that occurred
 /// \param[out] BID : the block ID of the decrypted packet (if present)
-/// \param[out] src_server_ip : the IP of the sourch server
 /// \return The error code that occurred.
 /// @sa macros
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
