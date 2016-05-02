@@ -9,6 +9,8 @@
 #ifndef VSLAB_MACROS_H
 #define VSLAB_MACROS_H
 
+#include"internalMacros.h"
+
 /// \defgroup macros Macros
 /// Macros and Enumerations used for the API
 /// @{
