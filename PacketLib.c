@@ -287,10 +287,8 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
 	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
-	socklen_t addr_length = sizeof(struct sockaddr);
+    socklen_t addr_length = sizeof(struct sockaddr);
 
-		// cleanup
-		free(src_addr);
 	// allocate enough packet buffer
 	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
 	if(NULL == buffer)
