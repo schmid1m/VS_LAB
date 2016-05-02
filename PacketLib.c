@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.c                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 21.04.2016                                 **
-**  Last change : 02.05.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -161,6 +161,7 @@ uint8_t check_packet(msg* packet)
     }
     else
     {
+        // Header valid
     }
 
     // ---- Check data field ----
@@ -191,6 +192,7 @@ uint8_t check_packet(msg* packet)
             }
             break;
         default:
+            // Cannot check data field (all data are valid)
             break;
     }
 
@@ -277,11 +279,15 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     // check for valid pointer
     if((NULL == packet) || (NULL == src_ip))
     {
-        return ERR_NO_INIT;
+        return ERR_INVALID_PTR;
     }
 
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
+    if(src_addr == NULL)
+    {
+        return ERR_ALLOC;
+    }
 	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
     socklen_t addr_length = sizeof(struct sockaddr);
 
@@ -291,13 +297,12 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	{
 		// cleanup
 		free(src_addr);
-		free(buffer);
 		return ERR_ALLOC;
 	}
 
 	// receive packet
 	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
-	if((result == -1) || (result == 0))
+    if((result < 0) || (result == 0))
 	{
 		// cleanup
 		free(src_addr);
@@ -308,7 +313,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	// cast packet to take a look into the header
 	recvMsg = (msg_header*)buffer;
 	// check for valid length field
-    if(result != (sizeof(msg_header) + recvMsg->length))
+    if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
 	{
 		packet->header = NULL;
 		packet->data = NULL;
@@ -320,11 +325,19 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	{
         // allocate header memory is the same for every packet type
         packet->header = calloc(1, sizeof(msg_header));
+        if(packet->header == NULL)
+        {
+            free(src_addr);
+            free(buffer);
+            return ERR_ALLOC;
+        }
 
         // allocate msg data memory
         packet->data = malloc((result - sizeof(msg_header)));
         if(packet->data == NULL)
         {
+            free(packet->header);
+            packet->header = NULL;
             free(src_addr);
             free(buffer);
             return ERR_ALLOC;
@@ -357,6 +370,10 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
 
 	/*  */
     uint8_t* bitstream = malloc(packet_length);
+    if(bitstream == NULL)
+    {
+        return ERR_ALLOC;
+    }
     /* copy message to the bitstream */
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
@@ -365,7 +382,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
         free(bitstream);
-        return ERROR;
+        return ERR_SEND_ERROR;
     }
 
     free(bitstream);
@@ -390,17 +407,5 @@ uint8_t free_msg(msg* packet)
         free(packet->data);
         packet->data = NULL;
     }
-    free(packet);
-    packet = NULL;
     return NO_ERROR;
-}
-
-uint32_t parseIPV4string(char* ipAddress) {
-  uint32_t ipbytes[4];
-  if(sscanf(ipAddress, "%uhh.%uhh.%uhh.%uhh", &ipbytes[3], &ipbytes[2], &ipbytes[1], &ipbytes[0]) == 4)
-  {
-      return ipbytes[0] | ipbytes[1] << 8 | ipbytes[2] << 16 | ipbytes[3] << 24;
-  }
-  else
-      return 0;
 }

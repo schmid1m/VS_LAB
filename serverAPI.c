@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : serverAPI.c                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 02.05.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -181,7 +181,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
     msg temp_msg;
     uint8_t error_code;
     dat_status_response* dat;
-    uint32_t target_client_ip = parseIPV4string(SERVER_UNICAST_ADDRESS);
+    uint32_t target_client_ip = inet_network(SERVER_UNICAST_ADDRESS);
 
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)

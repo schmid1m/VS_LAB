@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : commonAPI.h                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -36,7 +36,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip);
 /// @sa macros
 FID get_msg_type(msg* packet);
 
-/// \brief Deletes a packet structure and its subfields
+/// \brief Deletes the subfields of a msg type (But not the msg itsemf!)
 /// @author Michel Schmidt
 /// \param packet : the message to delete
 /// \return ERROR if the packet was not valid; SUCCESS if not

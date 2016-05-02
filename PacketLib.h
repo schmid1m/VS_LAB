@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.h                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 02.05.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -127,12 +127,6 @@ uint8_t check_packet(msg* packet);
 /// @sa msg
 /// @sa macros
 uint8_t send_msg(msg* packet, uint32_t target_ip);
-
-/// \brief Parse an IP to long
-/// @author Michel Schmidt
-/// \param[in] ipAddress : The IP address as string
-/// \return The IP as uint32_t; 0 for failure
-uint32_t parseIPV4string(char* ipAddress);
 
 /// @}
 
