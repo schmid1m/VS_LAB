@@ -48,7 +48,8 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	// bind socket
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
-		close(socketDscp);
+        shutdown(socketDscp, 2);
+//		close(socketDscp);
 		initialized = 0;
 		return ERROR;
 	}

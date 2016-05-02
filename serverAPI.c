@@ -40,7 +40,8 @@ int init_server(/*socket, Server IP, testserver IP*/)
 	// bind socket
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
-		close(socketDscp);
+        shutdown(socketDscp, 2);
+//		close(socketDscp);
 		//initialized = 0;
 		return ERROR;
 	}

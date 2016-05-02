@@ -17,7 +17,7 @@
 /// @{
 
 /// \brief Initiates the lib with the permanent server data
-/// @author <Author Name Here>
+/// @author Michel Schmidt
 /// \return Error or SUCCESS
 int init_server(/*socket, Server IP, testserver IP*/);
 
