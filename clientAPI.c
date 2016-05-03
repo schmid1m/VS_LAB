@@ -41,8 +41,7 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	// initialize my socket
     my_addr.sin_family = AF_INET;					    // Ethernet
 	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
-	/// TODO: take correct port   -> #define SERVER_PORT	11111 ?????
-	my_addr.sin_port = htons(0);						// set vslab server port
+    my_addr.sin_port = htons(CLIENT_PORT);						// set vslab server port
     memset(&(my_addr.sin_zero), 0x00, 8);		        // set remaining bytes to 0x0
 	// initialize target structure
     target_addr.sin_family = AF_INET;			        // Ethernet

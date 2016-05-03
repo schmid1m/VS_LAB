@@ -40,7 +40,7 @@ int init_server()
     // initialize target structure --> all information will be populated by recvform() calls
 	target_addr.sin_family = AF_INET;			// Ethernet
     target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    target_addr.sin_port = htons(SERVER_PORT);
+    target_addr.sin_port = htons(CLIENT_PORT);
     memset(&(target_addr.sin_zero), 0x00, 8);
 
     // bind socket
