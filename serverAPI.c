@@ -176,12 +176,12 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
     return error_code;
 }
 
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
+uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip)
 {
     msg temp_msg;
     uint8_t error_code;
     dat_status_response* dat;
-    uint32_t target_client_ip = inet_network(SERVER_UNICAST_ADDRESS);
+    uint32_t target_client_ip = target_status_ip;
 
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)

@@ -65,9 +65,10 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 /// @author Michel Schmidt
 /// \param[in] CID : The client ID
 /// \param[in] sequence_number : The sequence number for the current client
+/// \param[in] target_status_ip : The IP address of the status script
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number);
+uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip);
 
 /// \brief Send an error message
 /// @author Michel Schmidt

@@ -26,6 +26,7 @@
 #define ERR_SERVERINUSE              16 ///< The server is currently used by another client
 #define ERR_FUNCTIONTIMEOUT          32 ///< The called function timed out
 #define ERR_FUNCTIONEXEC             33 ///< An error executing this function was detected
+#define ERR_LOCK_TIMEOUT             34 ///< The Server lock timed out
 #define ERR_DECRYPT                  64 ///< The data could not be decrypted due to an error
 #define ERR_ALLOC                   128 ///< Not enough free space to allocate data
 #define ERR_INVALID_PTR             129 ///< The given pointer was not valid
