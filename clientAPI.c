@@ -29,7 +29,16 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	broadcastAddress = p_bca;
 	initialized = 1; // true
 
-	// init socket //
+
+    // allocate enough packet buffer
+    buffer = malloc(MAX_PACKET_LENGTH);
+    if(NULL == buffer)
+    {
+        // cleanup
+        return ERROR;
+    }
+
+    // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
 	{

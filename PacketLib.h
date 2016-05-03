@@ -24,6 +24,7 @@
 extern int socketDscp;                      // socket descriptor
 extern struct sockaddr_in	my_addr;		// my own address information
 extern struct sockaddr_in	target_addr;	// target address information
+extern uint8_t *buffer;                     // Receive Buffer
 
 /// @brief A structure for the message header
 /// You can easily type cast the first 8 Byte of a message to this struct.

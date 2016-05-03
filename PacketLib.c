@@ -22,6 +22,7 @@
 int socketDscp = 0;                       // socket descriptor
 struct sockaddr_in	my_addr;		// my own address information
 struct sockaddr_in	target_addr;	// target address information
+uint8_t *buffer;
 
 uint8_t check_pointers(msg* packet)
 {
@@ -291,22 +292,12 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
     socklen_t addr_length = sizeof(struct sockaddr);
 
-	// allocate enough packet buffer
-	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
-	if(NULL == buffer)
-	{
-		// cleanup
-		free(src_addr);
-		return ERR_ALLOC;
-	}
-
 	// receive packet
 	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
     if((result < 0) || (result == 0))
 	{
 		// cleanup
 		free(src_addr);
-		free(buffer);
         return ERR_NO_PACKET;
 	}
 
@@ -319,7 +310,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 		packet->data = NULL;
 		// cleanup
 		free(src_addr);
-		free(buffer);
 		return ERR_NO_PACKET;
 	}else
 	{
@@ -328,7 +318,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
         if(packet->header == NULL)
         {
             free(src_addr);
-            free(buffer);
             return ERR_ALLOC;
         }
 
@@ -339,7 +328,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
             free(packet->header);
             packet->header = NULL;
             free(src_addr);
-            free(buffer);
             return ERR_ALLOC;
         }
 		// copy data
@@ -350,7 +338,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
 	// cleanup
 	free(src_addr);
-	free(buffer);
 
 	// final packet check
 	return check_packet(packet);
