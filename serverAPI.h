@@ -74,12 +74,12 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_
 /// @author Michel Schmidt
 /// \param[in] err_code : the error that occurred
 /// \param[in] BID : The Block ID of this Block
-/// \param[in] target_client_ip : the IP address of the target client
 /// \param[in] fid : the function ID that was called
+/// \param[in] target_client_ip : the IP address of the target client
 /// \return The error code that occurred during excecution.
 /// @sa macros
 /// @sa FID
-uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, uint32_t target_client_ip, FID fid);
+uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_client_ip);
 
 /// \brief Extract the generator polynome
 /// Extract the generator polynome from the packet

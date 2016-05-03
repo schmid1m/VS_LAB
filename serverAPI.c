@@ -215,7 +215,7 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_
     return error_code;
 }
 
-uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client_ip, FID fid)
+uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t target_client_ip)
 {
     msg temp_msg;
     uint8_t rsp_error_code;
@@ -261,7 +261,14 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client
     temp_msg.header->version = PROTOCOL_VERSION;
 
     dat->errCode = err_code;
-    dat->blockID = blk_ID;
+    if((err_code == ERR_SERVERINUSE) ||(err_code == ERR_DECRYPT))
+    {
+        dat->blockID = blk_ID;
+    }
+    else
+    {
+        dat->blockID = 0;
+    }
 
     temp_msg.data = (void*) dat;
 
