@@ -51,7 +51,7 @@ uint8_t check_packet(msg* packet)
 
     // ---- check header fields on their own ----
     // check packet length
-    if(packet->header->length > sizeof(msg_header))
+    if(packet->header->length > (MAX_PACKET_LENGTH - sizeof(msg_header)))
     {
         return ERR_PACKETLENGTH;
     }
@@ -111,7 +111,7 @@ uint8_t check_packet(msg* packet)
             break;
         case DECRYPT_REQ:
             if((packet->header->length < sizeof(dat_decrypt_request)) ||
-               ((packet->header->length % 2) != 1))
+               ((packet->header->length % 2) != 0))
             {
                 return ERR_PACKETLENGTH;
             }
