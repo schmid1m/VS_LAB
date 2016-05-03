@@ -22,7 +22,7 @@
 int socketDscp = 0;                       // socket descriptor
 struct sockaddr_in	my_addr;		// my own address information
 struct sockaddr_in	target_addr;	// target address information
-uint8_t *buffer;
+uint8_t buffer[MAX_PACKET_LENGTH];
 
 uint8_t check_pointers(msg* packet)
 {

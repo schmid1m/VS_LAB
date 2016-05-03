@@ -23,14 +23,6 @@ int init_server()
         return SUCCESS;
     }
 
-    // allocate enough packet buffer
-    buffer = malloc(MAX_PACKET_LENGTH);
-    if(NULL == buffer)
-    {
-        // cleanup
-        return ERROR;
-    }
-
     // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
