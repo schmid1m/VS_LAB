@@ -315,13 +315,13 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
         return ERR_ALLOC;
     }
 
-    *data_len = packet->header->length - (2 * sizeof(uint16_t));
+    *data_len = (packet->header->length - (2 * sizeof(uint16_t))) / sizeof(uint16_t);
     *CID = ((dat_decrypt_request*)(packet->data))->clientID;
     *BID = ((dat_decrypt_request*)(packet->data))->blockID;
 
     for(uint32_t index = 0; index < *data_len; index++)
     {
-        *data[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
+        (*data)[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
 
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */

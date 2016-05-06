@@ -13,7 +13,7 @@
 /// @{
 
 #define SERVER_PORT                      11111 ///< The port on the Server side
-#define CLIENT_PORT                      11111 ///< The port on the Client side
+#define CLIENT_PORT                      11112 ///< The port on the Client side
 #define BROADCAST_ADDRESS          "127.0.0.1" ///< The Placeholder for broadcast address
 
 
