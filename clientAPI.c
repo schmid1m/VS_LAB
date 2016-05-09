@@ -99,7 +99,8 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
 uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
 {
 	msg tmp_msg;
-    uint8_t error_code;
+    uint8_t error_code = 0;
+    uint32_t var = 0;
 
     if(!initialized) return ERR_NO_INIT;
 
@@ -128,7 +129,7 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 	tmp_data->blockID= BID;
 	tmp_data->clientID = clientID;
 
-    for (uint32_t var = 0; var < data_len; var++) {
+    for (var = 0; var < data_len; var++) {
         (&(tmp_data->firstElement))[var]=data[var];
 	}
 
