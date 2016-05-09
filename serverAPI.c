@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : serverAPI.c                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -11,14 +11,19 @@
 #include "serverAPI.h"
 #include <stdlib.h>
 #include <string.h>
-#include <PacketLib.h>
+#include "PacketLib.h"
 
 // server socket
 static uint8_t initialized 		 = 0;
 
-int init_server(/*socket, Server IP, testserver IP*/)
+int init_server()
 {
-	// init socket //
+    if(initialized)
+    {
+        return SUCCESS;
+    }
+
+    // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
 	{
@@ -27,28 +32,34 @@ int init_server(/*socket, Server IP, testserver IP*/)
 	}
 
 	// initialize my own address structure
-	my_addr.sin_family = AF_INET;					// Ethernet
-	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
+    my_addr.sin_family = AF_INET;                               // Ethernet
+    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);                // automatically insert own address
 	my_addr.sin_port = htons(SERVER_PORT);						// set vslab server port
-	memset(&(my_addr.sin_zero), 0x00, 8);		// set remaining bytes to 0x0
+    memset(&(my_addr.sin_zero), 0x00, 8);                   	// set remaining bytes to 0x0
 
-	// initialize target structure --> all information will be populated by recvform() calls
+    // initialize target structure --> all information will be populated by recvform() calls
 	target_addr.sin_family = AF_INET;			// Ethernet
-	target_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-	target_addr.sin_port = htons(SERVER_PORT);
-	memset(&(target_addr.sin_zero), 0x00, 8);
-	// bind socket
+    target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    target_addr.sin_port = htons(CLIENT_PORT);
+    memset(&(target_addr.sin_zero), 0x00, 8);
+
+    // bind socket
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
-		close(socketDscp);
+        shutdown(socketDscp, 2);
+//		close(socketDscp);
 		//initialized = 0;
 		return ERROR;
 	}
 
+    initialized = 1;
+
 	return SUCCESS;
+}
 
-	// TODO: deinit_server schreiben --> socket schließen!
-
+int deinit_server()
+{
+    return SUCCESS;
 }
 
 uint8_t send_gp_rsp(uint32_t target_client_ip)
@@ -165,11 +176,12 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
     return error_code;
 }
 
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
+uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip)
 {
     msg temp_msg;
     uint8_t error_code;
     dat_status_response* dat;
+    uint32_t target_client_ip = target_status_ip;
 
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
@@ -197,13 +209,13 @@ uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number)
 
     temp_msg.data = (void*) dat;
 
-    // TODO error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;
 }
 
-uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client_ip, FID fid)
+uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t target_client_ip)
 {
     msg temp_msg;
     uint8_t rsp_error_code;
@@ -249,7 +261,14 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, uint32_t target_client
     temp_msg.header->version = PROTOCOL_VERSION;
 
     dat->errCode = err_code;
-    dat->blockID = blk_ID;
+    if((err_code == ERR_SERVERINUSE) ||(err_code == ERR_DECRYPT))
+    {
+        dat->blockID = blk_ID;
+    }
+    else
+    {
+        dat->blockID = 0;
+    }
 
     temp_msg.data = (void*) dat;
 
@@ -296,13 +315,13 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
         return ERR_ALLOC;
     }
 
-    *data_len = packet->header->length - (2 * sizeof(uint16_t));
+    *data_len = (packet->header->length - (2 * sizeof(uint16_t))) / sizeof(uint16_t);
     *CID = ((dat_decrypt_request*)(packet->data))->clientID;
     *BID = ((dat_decrypt_request*)(packet->data))->blockID;
 
     for(uint32_t index = 0; index < *data_len; index++)
     {
-        *data[index] = (uint16_t*)(&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
+        (*data)[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
 
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */

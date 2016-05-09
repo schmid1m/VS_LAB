@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.h                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -14,6 +14,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 /// \defgroup structs Structures
 /// Data Structures for internal use
@@ -119,7 +121,7 @@ uint8_t check_pointers(msg* packet);
 uint8_t check_packet(msg* packet);
 
 /// \brief Sends a message via UDP
-/// @author Cornelius Bott
+/// @author <Author Name Here>
 /// \param[in] packet: The packet to send
 /// \return The error code that occurred
 /// @sa msg
@@ -127,22 +129,5 @@ uint8_t check_packet(msg* packet);
 uint8_t send_msg(msg* packet, uint32_t target_ip);
 
 /// @}
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
-
-/*
-/// @brief Send a response to a broadcast from a client
-/// @param[in] socketdesc : socket descriptor of the socket that should be used
-/// @param[in] serverSocket : pointer to the server socket struct
-/// @param[in] clientAddress : pointer to the client socket struct
-/// \return ERROR if sending message isn't successful otherwise you'll get SUCCESS
-int server_broadcast_rsp(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress);
-*/
-
-/*********************************/
-/* OLD FUNCTIONS.... TO BE MOVED */
-/*********************************/
 
 #endif // PACKET_LIB_H

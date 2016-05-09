@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.c                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 21.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -22,60 +22,7 @@
 int socketDscp = 0;                       // socket descriptor
 struct sockaddr_in	my_addr;		// my own address information
 struct sockaddr_in	target_addr;	// target address information
-
-/*
-int server_broadcast_response(int socketdesc, struct sockaddr_in *serverSocket, struct sockaddr_in *clientAddress){
-	msg_header *msgHeader = malloc(sizeof(msg_header)+sizeof(dat_broadcast_response));		// storage for the complete response
-	dat_broadcast_response *msgData = (dat_broadcast_response*)(msgHeader+sizeof(msg_header));	// get the pointer to the data fields
-
-	// fill the header
-	msgHeader->func = FNC_BROADCAST;
-	msgHeader->length = sizeof(msg_header)+sizeof(dat_broadcast_response);
-	msgHeader->mode = MODE_SERVER;
-	msgHeader->priority = 0;																// highest priority
-	msgHeader->type = MSG_RESPONSE;
-	msgHeader->version = PROTOCOL_VERSION;
-
-	// fill the data field
-	msgData->serverIP = ntohs(clientAddress->sin_addr.s_addr);
-
-	// send the packet - example http://beej.us/guide/bgnet/output/html/multipage/sendman.html
-	if(-1 == sendto(socketdesc,(void*)msgHeader,(sizeof(msg_header)+sizeof(dat_broadcast_response)),0, (struct sockaddr*)clientAddress, sizeof(struct sockaddr_in))){
-		// error
-		free((void*)msgHeader);
-		return -1;
-	}else{
-		// no error
-        free((void*)msgHeader);
-		return 1;
-	}
-}
-
-
-/// @brief get the priority from a client
-/// @param[out] priority 0...255
-/// @param[in] received data on socket
-int get_priority(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->priority;
-}
-
-/// @brief get the protocol version of a received packet
-/// @param[out] protocol version
-/// @param[in] received data on socket
-int get_protocol_version(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->version;
-}
-
-/// @brief get the mode of a received packet
-/// @param[out] mode of received packet
-/// @param[in] received data on socket
-int get_mode(void *data){
-	msg_header *msgHeader = (msg_header*)data;
-	return msgHeader->mode;
-}
-*/
+uint8_t buffer[MAX_PACKET_LENGTH];
 
 uint8_t check_pointers(msg* packet)
 {
@@ -104,7 +51,7 @@ uint8_t check_packet(msg* packet)
 
     // ---- check header fields on their own ----
     // check packet length
-    if(packet->header->length > sizeof(msg_header))
+    if(packet->header->length > (MAX_PACKET_LENGTH - sizeof(msg_header)))
     {
         return ERR_PACKETLENGTH;
     }
@@ -164,7 +111,7 @@ uint8_t check_packet(msg* packet)
             break;
         case DECRYPT_REQ:
             if((packet->header->length < sizeof(dat_decrypt_request)) ||
-               ((packet->header->length % 2) != 1))
+               ((packet->header->length % 2) != 0))
             {
                 return ERR_PACKETLENGTH;
             }
@@ -215,7 +162,7 @@ uint8_t check_packet(msg* packet)
     }
     else
     {
-        return ERR_INVALIDMODE;
+        // Header valid
     }
 
     // ---- Check data field ----
@@ -246,6 +193,7 @@ uint8_t check_packet(msg* packet)
             }
             break;
         default:
+            // Cannot check data field (all data are valid)
             break;
     }
 
@@ -332,63 +280,64 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     // check for valid pointer
     if((NULL == packet) || (NULL == src_ip))
     {
-        return ERROR;
+        return ERR_INVALID_PTR;
     }
-
-    // allocate header memory is the same for every packet type
-    packet->header = calloc(1, sizeof(msg_header));
 
 	// struct to get the source ip
 	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
+    if(src_addr == NULL)
+    {
+        return ERR_ALLOC;
+    }
 	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
-	socklen_t addr_length = sizeof(struct sockaddr);
-
-		// cleanup
-		free(src_addr);
-	// allocate enough packet buffer
-	uint8_t *buffer = malloc(MAX_PACKET_LENGTH);
-	if(NULL == buffer)
-	{
-		// cleanup
-		free(src_addr);
-		free(buffer);
-		return ERR_ALLOC;
-	}
+    socklen_t addr_length = sizeof(struct sockaddr);
 
 	// receive packet
 	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
-	if((result == -1) || (result == 0))
+    if((result < 0) || (result == 0))
 	{
 		// cleanup
 		free(src_addr);
-		free(buffer);
-		return ERROR;
+        return ERR_NO_PACKET;
 	}
 
 	// cast packet to take a look into the header
 	recvMsg = (msg_header*)buffer;
 	// check for valid length field
-	if(recvMsg->length == 0)
+    if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
 	{
 		packet->header = NULL;
 		packet->data = NULL;
 		// cleanup
 		free(src_addr);
-		free(buffer);
 		return ERR_NO_PACKET;
 	}else
 	{
-		// allocate msg data memory
-		packet->header = calloc(1, (recvMsg->length-sizeof(msg_header)));
+        // allocate header memory is the same for every packet type
+        packet->header = calloc(1, sizeof(msg_header));
+        if(packet->header == NULL)
+        {
+            free(src_addr);
+            return ERR_ALLOC;
+        }
+
+        // allocate msg data memory
+        packet->data = malloc((result - sizeof(msg_header)));
+        if(packet->data == NULL)
+        {
+            free(packet->header);
+            packet->header = NULL;
+            free(src_addr);
+            return ERR_ALLOC;
+        }
 		// copy data
 		memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
-        memcpy(packet->data, &buffer[sizeof(msg_header)], (recvMsg->length-sizeof(msg_header)));
+        memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
         *src_ip = ntohl(src_addr->sin_addr.s_addr);
 	}
 
 	// cleanup
 	free(src_addr);
-	free(buffer);
 
 	// final packet check
 	return check_packet(packet);
@@ -403,22 +352,24 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ret_val;
     }
 
-    // TODO
     target_addr.sin_addr.s_addr = htonl(target_ip);
     ssize_t packet_length = sizeof(msg_header) + packet->header->length;
 
 	/*  */
     uint8_t* bitstream = malloc(packet_length);
+    if(bitstream == NULL)
+    {
+        return ERR_ALLOC;
+    }
     /* copy message to the bitstream */
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
-    memcpy((void*)bitstream[sizeof(msg_header)], (void*)packet->data, packet->header->length);
+    memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
 
 	/* use socket-function sendto(...) */
     //        sendto(int_fd,buf,size,flags,addr,addr_len)
-    // TODO
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
         free(bitstream);
-        return ERROR;
+        return ERR_SEND_ERROR;
     }
 
     free(bitstream);
@@ -443,7 +394,5 @@ uint8_t free_msg(msg* packet)
         free(packet->data);
         packet->data = NULL;
     }
-    free(packet);
-    packet = NULL;
     return NO_ERROR;
 }

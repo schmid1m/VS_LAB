@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : serverAPI.h                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -17,9 +17,14 @@
 /// @{
 
 /// \brief Initiates the lib with the permanent server data
-/// @author <Author Name Here>
-/// \return Error code planed as return value
-int init_server(/*socket, Server IP, testserver IP*/);
+/// @author Michel Schmidt
+/// \return Error or SUCCESS
+int init_server();
+
+/// \brief Deinitializes the server lib
+/// @author <ADD HERE>
+/// \return Error or SUCCESS
+int deinit_server();
 
 /// \brief Send a generator polynome response
 /// Confirm the successfull setting of the generator polynome
@@ -60,20 +65,21 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 /// @author Michel Schmidt
 /// \param[in] CID : The client ID
 /// \param[in] sequence_number : The sequence number for the current client
+/// \param[in] target_status_ip : The IP address of the status script
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number);
+uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip);
 
 /// \brief Send an error message
 /// @author Michel Schmidt
 /// \param[in] err_code : the error that occurred
 /// \param[in] BID : The Block ID of this Block
-/// \param[in] target_client_ip : the IP address of the target client
 /// \param[in] fid : the function ID that was called
+/// \param[in] target_client_ip : the IP address of the target client
 /// \return The error code that occurred during excecution.
 /// @sa macros
 /// @sa FID
-uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, uint32_t target_client_ip, FID fid);
+uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_client_ip);
 
 /// \brief Extract the generator polynome
 /// Extract the generator polynome from the packet

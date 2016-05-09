@@ -2,3 +2,5 @@ Makefile*
 *.o
 *.user
 vs_lab
+latex/*
+html/*

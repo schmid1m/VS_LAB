@@ -1,18 +1,16 @@
 /**************************************************************
 **  File        : clientAPI.c                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
 #include "internalMacros.h"
-#include "Macros.h"
 #include "commonAPI.h"
 #include "clientAPI.h"
 #include <stdlib.h>
 #include <string.h>
-#include <arpa/inet.h>
 
 static int16_t clientID 		 = -1;
 static uint8_t prio 			 = 255;
@@ -21,12 +19,18 @@ static uint8_t initialized 		 = 0;
 
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
-	clientID = p_cID;
+    if(initialized)
+    {
+        return SUCCESS;
+    }
+
+    clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
 	initialized = 1; // true
 
-	// init socket //
+
+    // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
 	{
@@ -37,18 +41,18 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	// initialize my socket
     my_addr.sin_family = AF_INET;					    // Ethernet
 	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
-	/// TODO: take correct port   -> #define SERVER_PORT	11111 ?????
-	my_addr.sin_port = htons(0);						// set vslab server port
+    my_addr.sin_port = htons(CLIENT_PORT);						// set vslab server port
     memset(&(my_addr.sin_zero), 0x00, 8);		        // set remaining bytes to 0x0
 	// initialize target structure
     target_addr.sin_family = AF_INET;			        // Ethernet
-	target_addr.sin_addr.s_addr = inet_addr(SERVER_UNICAST_ADDRESS);
+    target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	target_addr.sin_port = htons(SERVER_PORT);
 	memset(&(target_addr.sin_zero), 0x00, 8);
 	// bind socket
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
-		close(socketDscp);
+        shutdown(socketDscp, 2);
+//		close(socketDscp);
 		initialized = 0;
 		return ERROR;
 	}
@@ -56,6 +60,11 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	return SUCCESS;
 
 	// TODO: deinit_client schreiben und den Socket schließen ;-)
+}
+
+int deinit_client()
+{
+    return SUCCESS;
 }
 
 uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)

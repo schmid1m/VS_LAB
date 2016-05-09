@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : commonAPI.h                                **
-**  Version     : 2.4                                        **
+**  Version     : 2.5                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 25.04.2016                                 **
+**  Last change : 03.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -12,14 +12,12 @@
 #include "Macros.h"
 #include "PacketLib.h"
 
-extern uint8_t *rec_buf;
-
 /// \defgroup general General API functions
 /// API Functions that apply to both sides, client and server
 /// @{
 
 /// \brief Receive a message
-/// This function receives a message if there is one present on the socket.
+/// This function receives a message if there is one present on the Server.
 /// It also does a syntax check on the message to find badly generated packets.
 /// @author <Author Name Here>
 /// \param[out] packet : The received packet
@@ -38,7 +36,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip);
 /// @sa macros
 FID get_msg_type(msg* packet);
 
-/// \brief Deletes a packet structure and its subfields
+/// \brief Deletes the subfields of a msg type (But not the msg itsemf!)
 /// @author Michel Schmidt
 /// \param packet : the message to delete
 /// \return ERROR if the packet was not valid; SUCCESS if not
