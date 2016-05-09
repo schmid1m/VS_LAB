@@ -274,6 +274,8 @@ FID get_msg_type(msg* packet)
 
 uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
+	/// TODO: In allen Zweigen muss die src address gefreet werden. Das ist unschön. Man könnte die src address sofort nach dem Check von result < 0 wegspeichern, da man trotz allem was empfangen hat. Auch wenn allocs danach fehlschlagen.
+
 	int result;
 	msg_header* recvMsg;
 
