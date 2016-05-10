@@ -257,7 +257,7 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
     *data_len = packet->header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
 
 	// Copy ASCII-Chars
-    *data = (uint8_t*)malloc(sizeof(uint8_t) * (*data_len));
+    *data = (uint8_t*)malloc(sizeof(uint8_t) * (*data_len + 1)); // '\0' string printable
     if(*data == NULL)
     {
         return ERR_ALLOC;
