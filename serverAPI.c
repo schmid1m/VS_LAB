@@ -177,7 +177,7 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
     return error_code;
 }
 
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip)
+uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -279,7 +279,7 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
     return rsp_error_code;
 }
 
-uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio)
+uint8_t extract_gp_req(msg* packet, uint16_t* gp, int16_t* CID, uint8_t* prio)
 {
     if(!initialized) return ERR_NO_INIT;
 
@@ -298,7 +298,7 @@ uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio)
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len)
+uint8_t extract_dec_req(msg* packet, int16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len)
 {
     if(!initialized) return ERR_NO_INIT;
 
@@ -329,7 +329,7 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
     return NO_ERROR;	/* Server IP is extracted by recv_msg() */
 }
 
-uint8_t extract_unlock_req(msg* packet, uint16_t* CID)
+uint8_t extract_unlock_req(msg* packet, int16_t* CID)
 {
     if(!initialized) return ERR_NO_INIT;
 

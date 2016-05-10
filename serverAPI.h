@@ -68,7 +68,7 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 /// \param[in] target_status_ip : The IP address of the status script
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_status_rsp(uint16_t CID, uint32_t sequence_number, uint32_t target_status_ip);
+uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip);
 
 /// \brief Send an error message
 /// @author Michel Schmidt
@@ -90,7 +90,7 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_
 /// \param[out] prio : the priority of the client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio);
+uint8_t extract_gp_req(msg* packet, uint16_t* gp, int16_t* CID, uint8_t* prio);
 
 /// \brief Extract data to decrypt
 /// @author Michel Schmidt
@@ -101,7 +101,7 @@ uint8_t extract_gp_req(msg* packet, uint16_t* gp, uint16_t* CID, uint8_t* prio);
 /// \param[out] data_len : the amount of data words to decrypt
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len);
+uint8_t extract_dec_req(msg* packet, int16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len);
 
 /// \brief Extract the unlock command
 /// extract the command to unlock the server
@@ -110,7 +110,7 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
 /// \param[out] CID : the client ID
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t extract_unlock_req(msg* packet, uint16_t* CID);
+uint8_t extract_unlock_req(msg* packet, int16_t* CID);
 
 /// \brief Extract a broadcast request
 /// @author Michel Schmidt
