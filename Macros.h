@@ -15,7 +15,7 @@
 /// Macros and Enumerations used for the API
 /// @{
 // Error code definitions
-#define NO_ERROR                   	  0 ///< No error detected
+#define NO_ERROR                      0 ///< No error detected
 #define ERR_PACKETLENGTH              1 ///< The packet length is invalid or does not match the actual length
 #define ERR_INVALIDVERSION            2 ///< The version does not match the one defined in PACKET_LENGTH
 #define ERR_INVALIDMODE               3 ///< The mode does not exist
@@ -45,9 +45,9 @@
 /// @brief An enumeration of all possible functions
 /// This is used as function ID reference
 typedef enum{
-	GP_REQ,                       		///< Function : set polynome; Type : Request
-	GP_RSP,                      		///< Function : set polynome; Type : Response
-	DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
+    GP_REQ,                             ///< Function : set polynome; Type : Request
+    GP_RSP,                             ///< Function : set polynome; Type : Response
+    DECRYPT_REQ,                        ///< Function : decrypt data; Type : Request
     DECRYPT_RSP,                        ///< Function : decrypt data; Type : Response
     UNLOCK_REQ,                         ///< Function : unlock server; Type : Request
     UNLOCK_RSP,                         ///< Function : unlock server; Type : Response

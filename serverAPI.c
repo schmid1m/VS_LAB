@@ -34,11 +34,11 @@ int init_server()
     // initialize my own address structure
     my_addr.sin_family = AF_INET;                               // Ethernet
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY);                // automatically insert own address
-    my_addr.sin_port = htons(SERVER_PORT);						// set vslab server port
-    memset(&(my_addr.sin_zero), 0x00, 8);                   	// set remaining bytes to 0x0
+    my_addr.sin_port = htons(SERVER_PORT);                      // set vslab server port
+    memset(&(my_addr.sin_zero), 0x00, 8);                       // set remaining bytes to 0x0
 
     // initialize target structure --> all information will be populated by recvform() calls
-    target_addr.sin_family = AF_INET;			// Ethernet
+    target_addr.sin_family = AF_INET;           // Ethernet
     target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     target_addr.sin_port = htons(CLIENT_PORT);
     memset(&(target_addr.sin_zero), 0x00, 8);
@@ -309,7 +309,7 @@ uint8_t extract_gp_req(msg* packet, uint16_t* gp, int16_t* CID, uint8_t* prio)
     *gp = ((dat_gp_request*)(packet->data))->generator;
     *CID = ((dat_gp_request*)(packet->data))->clientID;
 
-    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
+    return NO_ERROR;    /* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_dec_req(msg* packet, int16_t* CID, uint16_t* BID, uint16_t** data, uint32_t* data_len)
@@ -340,7 +340,7 @@ uint8_t extract_dec_req(msg* packet, int16_t* CID, uint16_t* BID, uint16_t** dat
         (*data)[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
 
-    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
+    return NO_ERROR;    /* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_unlock_req(msg* packet, int16_t* CID)
@@ -357,7 +357,7 @@ uint8_t extract_unlock_req(msg* packet, int16_t* CID)
 
     *CID = ((dat_unlock_request*)(packet->data))->clientID;
 
-    return NO_ERROR;	/* Server IP is extracted by recv_msg() */
+    return NO_ERROR;    /* Server IP is extracted by recv_msg() */
 }
 
 uint8_t extract_brdcst_req(msg* packet)

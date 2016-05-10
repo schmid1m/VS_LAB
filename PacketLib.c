@@ -20,8 +20,8 @@
 #include "commonAPI.h"
 
 int socketDscp = 0;                       // socket descriptor
-struct sockaddr_in	my_addr;		// my own address information
-struct sockaddr_in	target_addr;	// target address information
+struct sockaddr_in  my_addr;        // my own address information
+struct sockaddr_in  target_addr;    // target address information
 uint8_t buffer[MAX_PACKET_LENGTH];
 
 uint8_t check_pointers(msg* packet)
@@ -274,8 +274,8 @@ FID get_msg_type(msg* packet)
 
 uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
-	int result;
-	msg_header* recvMsg;
+    int result;
+    msg_header* recvMsg;
 
     // check for valid pointer
     if((NULL == packet) || (NULL == src_ip))
@@ -292,29 +292,29 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     {
         return ERR_ALLOC;
     }
-	// we deal only with ipv4 but safety first ;-) --> think check is not necessary
+    // we deal only with ipv4 but safety first ;-) --> think check is not necessary
     socklen_t addr_length = sizeof(struct sockaddr);
 
-	// receive packet
-	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
+    // receive packet
+    result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
     if((result < 0) || (result == 0))
-	{
-		// cleanup
-		free(src_addr);
+    {
+        // cleanup
+        free(src_addr);
         return ERR_NO_PACKET;
-	}
+    }
 
     *src_ip = ntohl(src_addr->sin_addr.s_addr);
     free(src_addr);
 
     // cast packet to take a look into the header
-	recvMsg = (msg_header*)buffer;
-	// check for valid length field
+    recvMsg = (msg_header*)buffer;
+    // check for valid length field
     if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
-	{
+    {
         return ERR_PACKETLENGTH;
-	}else
-	{
+    }else
+    {
         // allocate header memory is the same for every packet type
         packet->header = calloc(1, sizeof(msg_header));
         if(packet->header == NULL)
@@ -330,13 +330,13 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
             packet->header = NULL;
             return ERR_ALLOC;
         }
-		// copy data
-		memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
+        // copy data
+        memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
         memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
-	}
+    }
 
-	// final packet check
-	return check_packet(packet);
+    // final packet check
+    return check_packet(packet);
 }
 
 uint8_t send_msg(msg* packet, uint32_t target_ip)
@@ -360,7 +360,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
 
-	/* use socket-function sendto(...) */
+    /* use socket-function sendto(...) */
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
         free(bitstream);
         return ERR_SEND_ERROR;
