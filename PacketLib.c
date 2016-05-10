@@ -285,8 +285,11 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
         return ERR_INVALID_PTR;
     }
 
-	// struct to get the source ip
-	struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
+    packet->header = NULL;
+    packet->data = NULL;
+
+    // struct to get the source ip
+    struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
     if(src_addr == NULL)
     {
         return ERR_ALLOC;
@@ -308,8 +311,6 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 	// check for valid length field
     if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
 	{
-		packet->header = NULL;
-		packet->data = NULL;
 		// cleanup
 		free(src_addr);
 		return ERR_NO_PACKET;
