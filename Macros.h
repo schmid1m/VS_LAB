@@ -31,6 +31,7 @@
 #define ERR_ALLOC                   128 ///< Not enough free space to allocate data
 #define ERR_INVALID_PTR             129 ///< The given pointer was not valid
 #define ERR_NOTFORME                130 ///< Client detected client ID miss match
+#define ERR_NO_GP                   131 ///< No GP is set in Server
 #define ERR_SEND_ERROR              252 ///< Could not send message
 #define ERR_NO_INIT                 253 ///< The API lib was not initialized
 #define ERR_NO_PACKET               254 ///< No Packet was on the socket

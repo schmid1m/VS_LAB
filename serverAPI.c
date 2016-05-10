@@ -237,15 +237,19 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
     switch(fid)
     {
         case GP_REQ:
+        case GP_RSP:
             temp_msg.header->func = FNC_GP;
             break;
         case DECRYPT_REQ:
+        case DECRYPT_RSP:
             temp_msg.header->func = FNC_DECRYPT;
             break;
         case UNLOCK_REQ:
+        case UNLOCK_RSP:
             temp_msg.header->func = FNC_UNLOCK;
             break;
         case BROADCAST_REQ:
+        case BROADCAST_RSP:
             temp_msg.header->func = FNC_BROADCAST;
             break;
         default:
@@ -254,11 +258,11 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
     }
 
 
-    temp_msg.header->length = 0;
+    temp_msg.header->length = 3;
     temp_msg.header->mode = MODE_SERVER;
     temp_msg.header->priority = SERVER_PRIO;
     temp_msg.header->reserved = VALUE_RESERVED;
-    temp_msg.header->type = MSG_RESPONSE;
+    temp_msg.header->type = MSG_ERROR;
     temp_msg.header->version = PROTOCOL_VERSION;
 
     dat->errCode = err_code;
