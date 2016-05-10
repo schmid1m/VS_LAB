@@ -38,7 +38,7 @@ FID get_msg_type(msg* packet);
 
 /// \brief Deletes the subfields of a msg type (But not the msg itsemf!)
 /// @author Michel Schmidt
-/// \param packet : the message to delete
+/// \param[in] packet : the message to delete
 /// \return ERROR if the packet was not valid; SUCCESS if not
 uint8_t free_msg(msg* packet);
 
