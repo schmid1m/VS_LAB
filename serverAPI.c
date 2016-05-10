@@ -91,6 +91,7 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
 {
 	msg tmp_msg;
 	uint8_t error_code;
+    uint32_t var;
 
 	tmp_msg.header = malloc(sizeof(msg_header));
     if(tmp_msg.header == NULL)
@@ -116,7 +117,7 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
 	tmp_data->blockID= BID;
 	tmp_data->clientID = clientID;
 
-	for (uint32_t var = 0; var < data_len; var++) {
+    for (var = 0; var < data_len; var++) {
 		(&(tmp_data->firstElement))[var]=data[var];
 	}
 
@@ -302,6 +303,7 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
     if(!initialized) return ERR_NO_INIT;
 
     uint8_t retVal;
+    uint32_t index;
 
     retVal = check_pointers(packet);
     if(retVal != NO_ERROR)
@@ -319,7 +321,7 @@ uint8_t extract_dec_req(msg* packet, uint16_t* CID, uint16_t* BID, uint16_t** da
     *CID = ((dat_decrypt_request*)(packet->data))->clientID;
     *BID = ((dat_decrypt_request*)(packet->data))->blockID;
 
-    for(uint32_t index = 0; index < *data_len; index++)
+    for(index = 0; index < *data_len; index++)
     {
         (*data)[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
     }
