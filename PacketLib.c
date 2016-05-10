@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.c                                **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 21.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -274,8 +274,6 @@ FID get_msg_type(msg* packet)
 
 uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 {
-	/// TODO: In allen Zweigen muss die src address gefreet werden. Das ist unschön. Man könnte die src address sofort nach dem Check von result < 0 wegspeichern, da man trotz allem was empfangen hat. Auch wenn allocs danach fehlschlagen.
-
 	int result;
 	msg_header* recvMsg;
 
@@ -306,21 +304,21 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
         return ERR_NO_PACKET;
 	}
 
-	// cast packet to take a look into the header
+    *src_ip = ntohl(src_addr->sin_addr.s_addr);
+    free(src_addr);
+
+    // cast packet to take a look into the header
 	recvMsg = (msg_header*)buffer;
 	// check for valid length field
     if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
 	{
-		// cleanup
-		free(src_addr);
-		return ERR_NO_PACKET;
+        return ERR_PACKETLENGTH;
 	}else
 	{
         // allocate header memory is the same for every packet type
         packet->header = calloc(1, sizeof(msg_header));
         if(packet->header == NULL)
         {
-            free(src_addr);
             return ERR_ALLOC;
         }
 
@@ -330,17 +328,12 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
         {
             free(packet->header);
             packet->header = NULL;
-            free(src_addr);
             return ERR_ALLOC;
         }
 		// copy data
 		memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
         memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
-        *src_ip = ntohl(src_addr->sin_addr.s_addr);
 	}
-
-	// cleanup
-	free(src_addr);
 
 	// final packet check
 	return check_packet(packet);
@@ -358,7 +351,6 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     target_addr.sin_addr.s_addr = htonl(target_ip);
     ssize_t packet_length = sizeof(msg_header) + packet->header->length;
 
-	/*  */
     uint8_t* bitstream = malloc(packet_length);
     if(bitstream == NULL)
     {
@@ -369,7 +361,6 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
 
 	/* use socket-function sendto(...) */
-    //        sendto(int_fd,buf,size,flags,addr,addr_len)
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
         free(bitstream);
         return ERR_SEND_ERROR;
@@ -389,7 +380,8 @@ uint8_t free_msg(msg* packet)
         return retVal;
     }
 
-    //delete header pointer
+    // delete header pointer
+    // valid pointer check is done in check_pointers(packet)
     free(packet->header);
     packet->header = NULL;
     if(packet->data != NULL)

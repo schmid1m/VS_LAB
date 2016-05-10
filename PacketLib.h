@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.h                                **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -43,17 +43,17 @@ typedef struct msg_header
 /// This function tries to set the polynome if the server is free or the current client has lower priority
 typedef struct dat_gp_request
 {
-	int16_t clientID;						///< The ID of the requesting client
-	uint16_t generator;						///< The generator polynome
+    int16_t clientID;						///< The ID of the requesting client
+    uint16_t generator;						///< The generator polynome
 }__attribute__((__packed__)) dat_gp_request;
 
 /// @brief Decrypt data
 /// Request to decrypt data. Polynome has to be set first. @sa dat_polynom_request
 typedef struct dat_decrypt_request
 {
-	int16_t clientID;						///< The ID of the requesting client
+    int16_t clientID;						///< The ID of the requesting client
     uint16_t blockID;   					///< A (random) Block ID to tell the packets apart
-	uint16_t firstElement;					///< First element of the data structure (16 Bit Chunks)
+    uint16_t firstElement;					///< First element of the data structure (16 Bit Chunks)
 }__attribute__((__packed__)) dat_decrypt_request;
 
 /// @brief Return decrypted data
@@ -62,7 +62,7 @@ typedef struct dat_decrypt_response
 {
     int16_t clientID;						///< The ID of the requesting client
     uint16_t blockID;   					///< The Block ID set by the client
-	uint8_t firstElement;					///< First element of the data structure (8 Bit Chunks)
+    uint8_t firstElement;					///< First element of the data structure (8 Bit Chunks)
 }__attribute__((__packed__)) dat_decrypt_response;
 
 /// @brief Unlocks the server
@@ -70,17 +70,17 @@ typedef struct dat_decrypt_response
 /// The server can then be used by another slave @sa dat_polynom_request
 typedef struct dat_unlock_request
 {
-	int16_t clientID;						///< The ID of the current client
-	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
+    int16_t clientID;						///< The ID of the current client
+    uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) dat_unlock_request;
 
 /// @brief Response to a status request
 /// Servers respond with their current status
 typedef struct dat_status_response
 {
-	int16_t clientID;						///< The ID of the currently connected client
-	uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
-	uint32_t wordCount;						///< Amount of Decrypted data words for this client
+    int16_t clientID;						///< The ID of the currently connected client
+    uint16_t reserved;						///< Reserved @sa VALUE_RESERVED
+    uint32_t wordCount;						///< Amount of Decrypted data words for this client
 }__attribute__((__packed__)) dat_status_response;
 
 /// @brief Error frame
@@ -121,7 +121,7 @@ uint8_t check_pointers(msg* packet);
 uint8_t check_packet(msg* packet);
 
 /// \brief Sends a message via UDP
-/// @author <Author Name Here>
+/// @author Stefan Scharrenbach
 /// \param[in] packet: The packet to send
 /// \return The error code that occurred
 /// @sa msg

@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : commonAPI.h                                **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -19,7 +19,7 @@
 /// \brief Receive a message
 /// This function receives a message if there is one present on the Server.
 /// It also does a syntax check on the message to find badly generated packets.
-/// @author <Author Name Here>
+/// @author Cornelius Bott
 /// \param[out] packet : The received packet
 /// \param[out] src_ip : Source-IP-Address
 /// \return The error code of the message. ERR_NO_PACKET if there is no message.

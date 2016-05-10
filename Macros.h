@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : Macros.h                                   **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 18.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -55,8 +55,8 @@ typedef enum{
     BROADCAST_RSP,                      ///< Function : broadcast; Type : Response
     STATUS_REQ,                         ///< Function : status check; Type : Request
     STATUS_RSP,                         ///< Function : status check; Type : Response
-	UNKNOWN,                             ///< Unknown function. This should not happen.
-	ERROR_RSP                          ///< Function : any; Type : Error
+    UNKNOWN,                            ///< Unknown function. This should not happen.
+    ERROR_RSP                           ///< Function : any; Type : Error
 }FID;
 
 /// @}

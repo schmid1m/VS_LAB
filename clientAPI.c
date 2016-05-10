@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : clientAPI.c                                **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -27,21 +27,18 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
     clientID = p_cID;
 	prio = p_prio;
 	broadcastAddress = p_bca;
-	initialized = 1; // true
-
 
     // init socket //
 	socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socketDscp < 0)
 	{
-		initialized = 0;
 		return ERROR;
 	}
 
 	// initialize my socket
     my_addr.sin_family = AF_INET;					    // Ethernet
 	my_addr.sin_addr.s_addr = htonl(INADDR_ANY);		// automatically insert own address
-    my_addr.sin_port = htons(CLIENT_PORT);						// set vslab server port
+    my_addr.sin_port = htons(CLIENT_PORT);				// set vslab server port
     memset(&(my_addr.sin_zero), 0x00, 8);		        // set remaining bytes to 0x0
 	// initialize target structure
     target_addr.sin_family = AF_INET;			        // Ethernet
@@ -52,18 +49,16 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 	if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
 	{
         shutdown(socketDscp, 2);
-//		close(socketDscp);
-		initialized = 0;
 		return ERROR;
 	}
 
-	return SUCCESS;
-
-	// TODO: deinit_client schreiben und den Socket schließen ;-)
+    initialized = 1; // true
+    return SUCCESS;
 }
 
 int deinit_client()
 {
+    // TODO: deinit_client schreiben und den Socket schließen ;-)
     return SUCCESS;
 }
 
@@ -86,7 +81,6 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
         free(temp_msg.header);
         return ERR_ALLOC;
     }
-
 
 	temp_msg.header->func = FNC_GP;
 	temp_msg.header->length = sizeof(dat_gp_request);
@@ -146,7 +140,6 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
 	free(tmp_msg.header);
 	free(tmp_msg.data);
 	return error_code;
-
 }
 
 uint8_t send_unlock_req(uint32_t target_server_ip)

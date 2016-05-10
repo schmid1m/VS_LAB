@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : internalMacros.h                           **
-**  Version     : 2.5                                        **
+**  Version     : 2.6                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 03.05.2016                                 **
+**  Last change : 10.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -13,7 +13,7 @@
 /// @{
 
 #define SERVER_PORT                      11111 ///< The port on the Server side
-#define CLIENT_PORT                      11112 ///< The port on the Client side
+#define CLIENT_PORT                      11111 ///< The port on the Client side
 #define BROADCAST_ADDRESS          "127.0.0.1" ///< The Placeholder for broadcast address
 
 
