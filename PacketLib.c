@@ -309,6 +309,9 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
     // cast packet to take a look into the header
     recvMsg = (msg_header*)buffer;
+
+    recvMsg->length = htons(recvMsg->length);
+
     // check for valid length field
     if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
     {
@@ -357,6 +360,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ERR_ALLOC;
     }
     /* copy message to the bitstream */
+    packet->header->length = htons(packet->header->length);
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
 
