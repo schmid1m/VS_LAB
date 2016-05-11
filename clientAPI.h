@@ -18,9 +18,9 @@
 
 /// \brief Initiates the lib with the permanent client data
 /// @author Philipp Duller
-/// \param p_cID : the client ID
-/// \param p_prio : the client priority
-/// \param p_bca : the broadcast address
+/// \param[in] p_cID : the client ID
+/// \param[in] p_prio : the client priority
+/// \param[in] p_bca : the broadcast address
 /// \return Error or SUCCESS
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca);
 

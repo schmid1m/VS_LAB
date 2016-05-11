@@ -33,8 +33,8 @@ typedef struct msg_header
     uint8_t priority;                       ///< The priority of the message (0 = HIGH, 255 = LOW)
     uint8_t version;                        ///< The current version of the script @sa PROTOCOL_VERSION
     uint8_t mode;                           ///< The mode of the message (sender type) @sa MODE_STATUS @sa MODE_SERVER @sa MODE_CLIENT
-    uint8_t func:4;                         ///< The called function of this message @sa FNC_POLYNOME @sa FNC_DECRYPT @sa FNC_UNLOCK @sa FNC_BROADCAST @sa FNC_STATUS
     uint8_t type:4;                         ///< The message Type @sa MSG_REQUEST @sa MSG_RESPONSE @sa MSG_ERROR
+    uint8_t func:4;                         ///< The called function of this message @sa FNC_POLYNOME @sa FNC_DECRYPT @sa FNC_UNLOCK @sa FNC_BROADCAST @sa FNC_STATUS
     uint16_t length;                        ///< The Length of the message data field
     uint16_t reserved;                      ///< Reserved @sa VALUE_RESERVED
 }__attribute__((__packed__)) msg_header;
