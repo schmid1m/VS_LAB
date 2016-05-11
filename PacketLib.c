@@ -360,9 +360,9 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
         return ERR_ALLOC;
     }
     /* copy message to the bitstream */
-    packet->header->length = htons(packet->header->length);
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
+    ((msg_header*)bitstream)->length = htons(((msg_header*)bitstream)->length);
 
     /* use socket-function sendto(...) */
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
