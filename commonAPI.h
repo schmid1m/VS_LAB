@@ -36,7 +36,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip);
 /// @sa macros
 FID get_msg_type(msg* packet);
 
-/// \brief Deletes the subfields of a msg type (But not the msg itsemf!)
+/// \brief Deletes the subfields of a msg type (But not the msg itself!)
 /// @author Michel Schmidt
 /// \param[in] packet : the message to delete
 /// \return ERROR if the packet was not valid; SUCCESS if not

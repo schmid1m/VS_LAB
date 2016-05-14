@@ -117,8 +117,8 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
         return ERR_ALLOC;
     }
     dat_decrypt_response* tmp_data = (dat_decrypt_response*) tmp_msg.data;
-    tmp_data->blockID= BID;
-    tmp_data->clientID = clientID;
+    tmp_data->blockID= htons(BID);
+    tmp_data->clientID = htons(clientID);
 
     for (var = 0; var < data_len; var++) {
         (&(tmp_data->firstElement))[var]=data[var];
@@ -213,8 +213,8 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
     temp_msg.header->type = MSG_RESPONSE;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    dat->clientID = CID;
-    dat->wordCount = sequence_number;
+    dat->clientID = htons(CID);
+    dat->wordCount = htons(sequence_number);
     dat->reserved = VALUE_RESERVED;
 
     temp_msg.data = (void*) dat;
@@ -278,7 +278,7 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
     dat->errCode = err_code;
     if((err_code == ERR_SERVERINUSE) ||(err_code == ERR_DECRYPT))
     {
-        dat->blockID = blk_ID;
+        dat->blockID = htons(blk_ID);
     }
     else
     {
@@ -306,8 +306,8 @@ uint8_t extract_gp_req(msg* packet, uint16_t* gp, int16_t* CID, uint8_t* prio)
     }
 
     *prio = packet->header->priority;
-    *gp = ((dat_gp_request*)(packet->data))->generator;
-    *CID = ((dat_gp_request*)(packet->data))->clientID;
+    *gp = htons(((dat_gp_request*)(packet->data))->generator);
+    *CID = htons(((dat_gp_request*)(packet->data))->clientID);
 
     return NO_ERROR;    /* Server IP is extracted by recv_msg() */
 }
@@ -332,12 +332,12 @@ uint8_t extract_dec_req(msg* packet, int16_t* CID, uint16_t* BID, uint16_t** dat
     }
 
     *data_len = (packet->header->length - (2 * sizeof(uint16_t))) / sizeof(uint16_t);
-    *CID = ((dat_decrypt_request*)(packet->data))->clientID;
-    *BID = ((dat_decrypt_request*)(packet->data))->blockID;
+    *CID = htons(((dat_decrypt_request*)(packet->data))->clientID);
+    *BID = htons(((dat_decrypt_request*)(packet->data))->blockID);
 
     for(index = 0; index < *data_len; index++)
     {
-        (*data)[index] = ((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index];
+        (*data)[index] = htons(((uint16_t*)&(((dat_decrypt_request*)(packet->data))->firstElement))[index]);
     }
 
     return NO_ERROR;    /* Server IP is extracted by recv_msg() */
@@ -355,7 +355,7 @@ uint8_t extract_unlock_req(msg* packet, int16_t* CID)
         return retVal;
     }
 
-    *CID = ((dat_unlock_request*)(packet->data))->clientID;
+    *CID = htons(((dat_unlock_request*)(packet->data))->clientID);
 
     return NO_ERROR;    /* Server IP is extracted by recv_msg() */
 }

@@ -90,8 +90,8 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
     temp_msg.header->type = MSG_REQUEST;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    ((dat_gp_request*)temp_msg.data)->clientID = clientID;
-    ((dat_gp_request*)temp_msg.data)->generator = gp;
+    ((dat_gp_request*)temp_msg.data)->clientID = htons(clientID);
+    ((dat_gp_request*)temp_msg.data)->generator = htons(gp);
 
     error_code = send_msg(&temp_msg,target_server_ip);
     free(temp_msg.header);
@@ -129,13 +129,12 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
     }
 
     dat_decrypt_request* tmp_data = (dat_decrypt_request*) tmp_msg.data;
-    tmp_data->blockID= BID;
-    tmp_data->clientID = clientID;
+    tmp_data->blockID= htons(BID);
+    tmp_data->clientID = htons(clientID);
 
     for (var = 0; var < data_len; var++) {
-        (&(tmp_data->firstElement))[var]=data[var];
+        (&(tmp_data->firstElement))[var]=htons(data[var]);
     }
-
     error_code = send_msg(&tmp_msg,target_server_ip);
     free(tmp_msg.header);
     free(tmp_msg.data);
@@ -172,7 +171,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
     tmp.header->reserved = VALUE_RESERVED;
 
     // Fill datafield
-    ((dat_unlock_request*)tmp.data)->clientID = (int16_t)clientID;
+    ((dat_unlock_request*)tmp.data)->clientID = htons((int16_t)clientID);
 
     // Send out message
     retVal = send_msg(&tmp,target_server_ip);
@@ -237,6 +236,7 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
     if(!initialized) return ERR_NO_INIT;
 
     uint8_t retVal;
+    int16_t cid;
 
     retVal = check_pointers(packet);
     if(retVal != NO_ERROR)
@@ -244,9 +244,10 @@ uint8_t extract_dec_rsp(msg* packet, uint16_t* BID, uint8_t** data, uint32_t* da
         return retVal;
     }
 
-    if(((dat_decrypt_response*)packet->data)->clientID != clientID) return ERR_NOTFORME;
+    cid = htons(((dat_decrypt_response*)packet->data)->clientID);
+    if(cid != clientID) return ERR_NOTFORME;
 
-    *BID = ((dat_decrypt_response*)packet->data)->blockID;
+    *BID = htons(((dat_decrypt_response*)packet->data)->blockID);
     *data_len = packet->header->length - sizeof(dat_decrypt_response) + 1; // uint8_t firstElement
 
     // Copy ASCII-Chars
@@ -303,7 +304,7 @@ uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID)
     }
 
     *error_code = ((error*)packet->data)->errCode;
-    *BID = ((error*)packet->data)->blockID;
+    *BID = htons(((error*)packet->data)->blockID);
 
     return NO_ERROR;
 }
