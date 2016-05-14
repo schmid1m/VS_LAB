@@ -309,6 +309,9 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
 
     // cast packet to take a look into the header
     recvMsg = (msg_header*)buffer;
+
+    recvMsg->length = htons(recvMsg->length);
+
     // check for valid length field
     if((unsigned int)result != (sizeof(msg_header) + recvMsg->length))
     {
@@ -359,6 +362,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     /* copy message to the bitstream */
     memcpy((void*)bitstream, (void*)packet->header, sizeof(msg_header));
     memcpy((void*)&(bitstream[sizeof(msg_header)]), (void*)packet->data, packet->header->length);
+    ((msg_header*)bitstream)->length = htons(((msg_header*)bitstream)->length);
 
     /* use socket-function sendto(...) */
     if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
