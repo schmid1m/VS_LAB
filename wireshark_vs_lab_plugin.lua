@@ -2,6 +2,27 @@
 local MODES = {[0x01] = "Status Script", [0x02] = "Server", [0x03] = "Client"}
 local FUNCTIONS = {[0x00] = "Generator Polynome", [0x01] = "Decrypt", [0x02] = "Unlock", [0x05] = "Broadcast", [0x06] = "Status"}
 local TYPES = {[0x03] = "Request", [0x04] = "Response", [0x0F] = "Error"}
+local ERRORS = {[0]   = 'NO_ERROR',
+				[1]   = 'ERR_PACKETLENGTH',
+				[2]   = 'ERR_INVALIDVERSION',
+				[3]   = 'ERR_INVALIDMODE',
+				[4]   = 'ERR_NOSUCHFUNCTION',
+				[5]   = 'ERR_INVALIDTYPE',
+				[6]   = 'ERR_HEADER_DATA',
+				[8]   = 'ERR_DATA',
+			    [16]  = 'ERR_SERVERINUSE',
+			    [32]  = 'ERR_FUNCTIONTIMEOUT',
+			    [33]  = 'ERR_FUNCTIONEXEC',
+			    [34]  ='ERR_LOCK_TIMEOUT',
+			    [64]  = 'ERR_DECRYPT',
+			    [128] = 'ERR_ALLOC',
+			    [129] = 'ERR_INVALID_PTR',
+			    [130] = 'ERR_NOTFORME',
+			    [131] = 'ERR_NO_GP',
+			    [252] = 'ERR_SEND_ERROR',
+			    [253] = 'ERR_NO_INIT',
+			    [254] = 'ERR_NO_PACKET',
+			    [255] = 'ERR_UNKNOWN'}
 
 -- declare our protocol
 vs_proto = Proto("vs","VS_LAB")
@@ -20,7 +41,7 @@ fields.gp   	   = ProtoField.uint16("fields.gp"			, "Generator       "		, base.H
 fields.crypt_dat   = ProtoField.uint16("fields.crypt_dat"	, "Encrypted data  "		, base.HEX)
 fields.decrypt_dat = ProtoField.uint8 ("fields.crypt_dat"	, "Decrypted data  "		, base.HEX)
 fields.seq_num     = ProtoField.uint32("fields.seq_num"	    , "Sequence Number "		, base.DEC)
-fields.err         = ProtoField.uint8 ("fields.err"	        , "Error Code      "		, base.DEC)
+fields.err         = ProtoField.uint8 ("fields.err"	        , "Error Code      "		, base.DEC, ERRORS)
 
 -- create a function to dissect it
 function vs_proto.dissector(buffer,pinfo,tree)
@@ -71,8 +92,8 @@ function vs_proto.dissector(buffer,pinfo,tree)
    		subtreed:add(fields.res, buffer(10,2))
    		subtreed:add(fields.seq_num, buffer(12,4))
 	elseif(msg_type == 0x0F) then
-        subtreed:add(fields.err, buffer(8,2))
-        subtreed:add(fields.bid , buffer(10,2))
+        subtreed:add(fields.err, buffer(8,1))
+        subtreed:add(fields.bid , buffer(9,2))
    end
 end
 -- load the udp.port table

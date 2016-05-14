@@ -42,6 +42,12 @@ FID get_msg_type(msg* packet);
 /// \return ERROR if the packet was not valid; SUCCESS if not
 uint8_t free_msg(msg* packet);
 
+/// \brief Frees the data stream allocated by extract_dec_req / _rsp
+/// @author Philipp Duller
+/// \param[in] ptr : the data field to be deleted
+/// \return NO_ERROR
+uint8_t free_data(uint8_t* ptr);
+
 /// @}
 
 #endif // VSLAB_COMMON_API_H

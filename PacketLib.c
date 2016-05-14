@@ -395,3 +395,11 @@ uint8_t free_msg(msg* packet)
     }
     return NO_ERROR;
 }
+
+uint8_t free_data(uint8_t* ptr)
+{
+    if(ptr == NULL)
+        return ERR_INVALID_PTR;
+    free(ptr);
+    return NO_ERROR;
+}
