@@ -17,6 +17,18 @@
 #include <sys/types.h>
 #include <netdb.h>
 
+#ifdef  SHOW_API_ERRORS
+#define DEBUG_PRINTF(x)        printf(x);
+#define DEBUG_PRINTF1(x,y)     printf(x,y);
+#define DEBUG_PRINTF2(x,y,z)   printf(x,y,z);
+#define DEBUG_PRINTF3(x,y,z,a) printf(x,y,z,a);
+#else  // SHOW_API_ERRORS
+#define DEBUG_PRINTF(x)
+#define DEBUG_PRINTF1(x,y)
+#define DEBUG_PRINTF2(x,y,z)
+#define DEBUG_PRINTF3(x,y,z,a)
+#endif // SHOW_API_ERRORS
+
 /// \defgroup structs Structures
 /// Data Structures for internal use
 /// @{

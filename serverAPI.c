@@ -233,6 +233,23 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
 
     if(!initialized) return ERR_NO_INIT;
 
+    // Only pass relevant error codes to the client
+    if((err_code == ERR_INVALIDVERSION) ||
+       (err_code == ERR_DECRYPT) ||
+       (err_code == ERR_SERVERINUSE) ||
+       (err_code == ERR_FUNCTIONEXEC) ||
+       (err_code == ERR_FUNCTIONTIMEOUT) ||
+       (err_code == ERR_NO_GP) ||
+       (err_code == ERR_PACKETLENGTH) ||
+       (err_code == ERR_LOCK_TIMEOUT))
+    {
+
+    }
+    else
+    {
+        return(NO_ERROR);
+    }
+
     temp_msg.header = malloc(sizeof(msg_header));
     if(temp_msg.header == NULL)
     {
