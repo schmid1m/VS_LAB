@@ -28,8 +28,6 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
     clientID = p_cID;
     prio = p_prio;
     broadcastAddress = p_bca;
-    broadcastAddress = htonl(inet_addr("10.0.3.255"));
-    broadcastAddress = broadcastAddress | 0x000000ff;
 
     // init socket //
     socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
