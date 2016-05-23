@@ -19,6 +19,7 @@ static uint8_t initialized       = 0;
 
 int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
 {
+	int enable = 1, broadcast = 1;
     if(initialized)
     {
         return SUCCESS;
@@ -27,11 +28,15 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
     clientID = p_cID;
     prio = p_prio;
     broadcastAddress = p_bca;
+    broadcastAddress = htonl(inet_addr("10.0.3.255"));
+    broadcastAddress = broadcastAddress | 0x000000ff;
 
     // init socket //
     socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
     if (socketDscp < 0)
     {
+    	printf("Client: can not get socket\n");
         return ERROR;
     }
 
@@ -48,9 +53,12 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
     // bind socket
     if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
     {
+    	printf("Client: can not bind socket\n");
         shutdown(socketDscp, 2);
         return ERROR;
     }
+    setsockopt(socketDscp, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    setsockopt(socketDscp, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(int));
 
     initialized = 1; // true
     return SUCCESS;

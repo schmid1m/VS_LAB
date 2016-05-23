@@ -18,13 +18,15 @@ static uint8_t initialized = 0;
 
 int init_server()
 {
-    if(initialized)
+    int enable = 1, broadcast = 1;
+	if(initialized)
     {
         return SUCCESS;
     }
 
     // init socket //
     socketDscp=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
     if (socketDscp < 0)
     {
         /// TODO: initialized = 0; --> sollte man vielleicht hier auch tun?
@@ -49,6 +51,8 @@ int init_server()
         shutdown(socketDscp, 2);
         return ERROR;
     }
+    setsockopt(socketDscp, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
+    setsockopt(socketDscp, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(int));
 
     initialized = 1;
 
