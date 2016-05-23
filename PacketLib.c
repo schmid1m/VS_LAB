@@ -24,6 +24,29 @@ struct sockaddr_in  my_addr;        // my own address information
 struct sockaddr_in  target_addr;    // target address information
 uint8_t buffer[MAX_PACKET_LENGTH];
 
+uint8_t select_udp( int fd, int timeout ) // timeout in sekunden
+{
+  fd_set fdset;
+  FD_ZERO( &fdset );
+  FD_SET( fd, &fdset );
+
+  struct timeval tv_timeout = { timeout, 0 };
+
+  int select_retval = select( fd+1, &fdset, NULL, NULL, &tv_timeout );
+
+  if ( select_retval == -1 )
+  {
+    // ERROR!
+  }
+
+  if ( FD_ISSET( fd, &fdset ) )
+  {
+    return 1; // du kannst jetzt von fd lesen
+  }
+
+  return 0; // timeout
+}
+
 uint8_t check_pointers(msg* packet)
 {
     // check for valid pointers
@@ -347,7 +370,16 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     socklen_t addr_length = sizeof(struct sockaddr);
 
     // receive packet
-    result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
+    if (select_udp(socketDscp,1)==1)
+    {
+    	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
+    }
+    else
+    {
+      //printf("NONBLOCKING\n");
+      return ERR_NO_PACKET;
+    }
+    //result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
     if((result < 0) || (result == 0))
     {
         // cleanup
