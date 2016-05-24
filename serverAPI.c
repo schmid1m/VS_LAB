@@ -245,7 +245,9 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
        (err_code == ERR_FUNCTIONTIMEOUT) ||
        (err_code == ERR_NO_GP) ||
        (err_code == ERR_PACKETLENGTH) ||
-       (err_code == ERR_LOCK_TIMEOUT))
+       (err_code == ERR_LOCK_TIMEOUT) ||
+       (err_code == ERR_NOSUCHFUNCTION) ||
+       (err_code == ERR_UNKNOWN))
     {
 
     }
