@@ -437,16 +437,22 @@ uint8_t free_msg(msg* packet)
         return retVal;
     }
 
+    if(packet->data != NULL)
+    {
+        if(packet->header->length == 0)
+        {
+            DEBUG_PRINTF("API ERROR: Header says data length is 0 but data pointer is not NULL\n")
+        }
+        else
+        {
+            free(packet->data);
+            packet->data = NULL;
+        }
+    }
     // delete header pointer
     // valid pointer check is done in check_pointers(packet)
     free(packet->header);
     packet->header = NULL;
-    if(packet->data != NULL)
-    {
-        DEBUG_PRINTF("API ERROR: Could not find packet data but length is not 0\n")
-        free(packet->data);
-        packet->data = NULL;
-    }
     return NO_ERROR;
 }
 
