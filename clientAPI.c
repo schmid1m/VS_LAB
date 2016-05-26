@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : clientAPI.c                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -11,6 +11,7 @@
 #include "clientAPI.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 static int16_t clientID          = -1;
 static uint8_t prio              = 255;
@@ -41,12 +42,12 @@ int init_client(int16_t p_cID, uint8_t p_prio, uint32_t p_bca)
     // initialize my socket
     my_addr.sin_family = AF_INET;                       // Ethernet
     my_addr.sin_addr.s_addr = htonl(INADDR_ANY);        // automatically insert own address
-    my_addr.sin_port = htons(CLIENT_PORT);              // set vslab server port
+    my_addr.sin_port = htons(0);                        // set vslab server port
     memset(&(my_addr.sin_zero), 0x00, 8);               // set remaining bytes to 0x0
     // initialize target structure
     target_addr.sin_family = AF_INET;                   // Ethernet
-    target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    target_addr.sin_port = htons(SERVER_PORT);
+//    target_addr.sin_addr.s_addr = htonl(INADDR_ANY); // This is initialized on send
+//    target_addr.sin_port = htons(SERVER_PORT);       // This is initialized on send
     memset(&(target_addr.sin_zero), 0x00, 8);
     // bind socket
     if (bind(socketDscp, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) < 0)
@@ -68,7 +69,7 @@ int deinit_client()
     return SUCCESS;
 }
 
-uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
+uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip, uint16_t target_server_port)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -99,13 +100,13 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip)
     ((dat_gp_request*)temp_msg.data)->clientID = htons(clientID);
     ((dat_gp_request*)temp_msg.data)->generator = htons(gp);
 
-    error_code = send_msg(&temp_msg,target_server_ip);
+    error_code = send_msg(&temp_msg,target_server_ip, target_server_port);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;
 }
 
-uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip)
+uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip, uint16_t target_server_port)
 {
     msg tmp_msg;
     uint8_t error_code = 0;
@@ -141,13 +142,13 @@ uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t t
     for (var = 0; var < data_len; var++) {
         (&(tmp_data->firstElement))[var]=htons(data[var]);
     }
-    error_code = send_msg(&tmp_msg,target_server_ip);
+    error_code = send_msg(&tmp_msg,target_server_ip, target_server_port);
     free(tmp_msg.header);
     free(tmp_msg.data);
     return error_code;
 }
 
-uint8_t send_unlock_req(uint32_t target_server_ip)
+uint8_t send_unlock_req(uint32_t target_server_ip, uint16_t target_server_port)
 {
     msg tmp;
     uint8_t retVal;
@@ -180,7 +181,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
     ((dat_unlock_request*)tmp.data)->clientID = htons((int16_t)clientID);
 
     // Send out message
-    retVal = send_msg(&tmp,target_server_ip);
+    retVal = send_msg(&tmp,target_server_ip, target_server_port);
 
     // Free memory
     free(tmp.header);
@@ -189,7 +190,7 @@ uint8_t send_unlock_req(uint32_t target_server_ip)
     return retVal;
 }
 
-uint8_t send_brdcst_req()
+uint8_t send_brdcst_req(uint16_t target_server_port)
 {
     msg tmp;
     uint8_t retVal;
@@ -214,7 +215,7 @@ uint8_t send_brdcst_req()
     tmp.header->length = 0;
 
     // Send out message
-    retVal = send_msg(&tmp,broadcastAddress);
+    retVal = send_msg(&tmp,broadcastAddress, target_server_port);
 
     // Free memory
     free(tmp.header);

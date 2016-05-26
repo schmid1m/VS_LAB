@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.h                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 19.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -135,10 +135,12 @@ uint8_t check_packet(msg* packet);
 /// \brief Sends a message via UDP
 /// @author Stefan Scharrenbach
 /// \param[in] packet: The packet to send
+/// \param[in] target_ip: The IP to send to
+/// \param[in] target_port: The Port to send to
 /// \return The error code that occurred
 /// @sa msg
 /// @sa macros
-uint8_t send_msg(msg* packet, uint32_t target_ip);
+uint8_t send_msg(msg* packet, uint32_t target_ip, uint16_t target_port);
 
 /// @}
 

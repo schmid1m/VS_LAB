@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : serverAPI.c                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -41,8 +41,8 @@ int init_server()
 
     // initialize target structure --> all information will be populated by recvform() calls
     target_addr.sin_family = AF_INET;           // Ethernet
-    target_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    target_addr.sin_port = htons(CLIENT_PORT);
+    //    target_addr.sin_addr.s_addr = htonl(INADDR_ANY); // This is initialized on send
+    //    target_addr.sin_port = htons(CLIENT_PORT);       // This is initialized on send
     memset(&(target_addr.sin_zero), 0x00, 8);
 
     // bind socket
@@ -65,7 +65,7 @@ int deinit_server()
     return SUCCESS;
 }
 
-uint8_t send_gp_rsp(uint32_t target_client_ip)
+uint8_t send_gp_rsp(uint32_t target_client_ip, uint16_t target_client_port)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -87,12 +87,12 @@ uint8_t send_gp_rsp(uint32_t target_client_ip)
     temp_msg.header->type = MSG_RESPONSE;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
     free(temp_msg.header);
     return error_code;
 }
 
-uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip)
+uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip, uint16_t target_client_port)
 {
     msg tmp_msg;
     uint8_t error_code;
@@ -128,13 +128,13 @@ uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t dat
         (&(tmp_data->firstElement))[var]=data[var];
     }
 
-    error_code = send_msg(&tmp_msg,target_client_ip);
+    error_code = send_msg(&tmp_msg,target_client_ip, target_client_port);
     free(tmp_msg.header);
     free(tmp_msg.data);
     return error_code;
 }
 
-uint8_t send_unlock_rsp(uint32_t target_client_ip)
+uint8_t send_unlock_rsp(uint32_t target_client_ip, uint16_t target_client_port)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -156,12 +156,12 @@ uint8_t send_unlock_rsp(uint32_t target_client_ip)
     temp_msg.header->type = MSG_RESPONSE;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
     free(temp_msg.header);
     return error_code;
 }
 
-uint8_t send_brdcst_rsp(uint32_t target_client_ip)
+uint8_t send_brdcst_rsp(uint32_t target_client_ip, uint16_t target_client_port)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -183,12 +183,12 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip)
     temp_msg.header->type = MSG_RESPONSE;
     temp_msg.header->version = PROTOCOL_VERSION;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
     free(temp_msg.header);
     return error_code;
 }
 
-uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip)
+uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip, uint16_t target_client_port)
 {
     msg temp_msg;
     uint8_t error_code;
@@ -223,13 +223,13 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
 
     temp_msg.data = (void*) dat;
 
-    error_code = send_msg(&temp_msg,target_client_ip);
+    error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
     free(temp_msg.header);
     free(temp_msg.data);
     return error_code;
 }
 
-uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t target_client_ip)
+uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t target_client_ip, uint16_t target_client_port)
 {
     msg temp_msg;
     uint8_t rsp_error_code;
@@ -310,7 +310,7 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
 
     temp_msg.data = (void*) dat;
 
-    rsp_error_code = send_msg(&temp_msg,target_client_ip);
+    rsp_error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
     free(temp_msg.header);
     free(temp_msg.data);
     return rsp_error_code;

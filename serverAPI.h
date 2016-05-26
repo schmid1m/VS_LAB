@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : serverAPI.h                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -30,9 +30,10 @@ int deinit_server();
 /// Confirm the successfull setting of the generator polynome
 /// @author Simon Lauser
 /// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_gp_rsp(uint32_t target_client_ip);
+uint8_t send_gp_rsp(uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Send the decrypted data
 /// Return the decrypted data to the client
@@ -42,23 +43,26 @@ uint8_t send_gp_rsp(uint32_t target_client_ip);
 /// \param[in] data : The data to send
 /// \param[in] data_len : The length of the data field
 /// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip);
+uint8_t send_dec_rsp(uint16_t BID, int16_t clientID, uint8_t* data, uint32_t data_len, uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Send the unlock confirmation
 /// @author Michel Schmidt
 /// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_unlock_rsp(uint32_t target_client_ip);
+uint8_t send_unlock_rsp(uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Send a broadcast response
 /// @author Michel Schmidt
 /// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_brdcst_rsp(uint32_t target_client_ip);
+uint8_t send_brdcst_rsp(uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Send a status response
 /// Send the current status to the status script
@@ -66,9 +70,10 @@ uint8_t send_brdcst_rsp(uint32_t target_client_ip);
 /// \param[in] CID : The client ID
 /// \param[in] sequence_number : The sequence number for the current client
 /// \param[in] target_status_ip : The IP address of the status script
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip);
+uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_status_ip, uint16_t target_client_port);
 
 /// \brief Send an error message
 /// @author Michel Schmidt
@@ -76,10 +81,11 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
 /// \param[in] BID : The Block ID of this Block
 /// \param[in] fid : the function ID that was called
 /// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
 /// \return The error code that occurred during excecution.
 /// @sa macros
 /// @sa FID
-uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_client_ip);
+uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Extract the generator polynome
 /// Extract the generator polynome from the packet
