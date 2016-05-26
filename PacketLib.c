@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : PacketLib.c                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 21.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -339,7 +339,7 @@ FID get_msg_type(msg* packet)
     return UNKNOWN;
 }
 
-uint8_t recv_msg(msg* packet, uint32_t* src_ip)
+uint8_t recv_msg(msg* packet, uint32_t* src_ip, uint16_t* src_port)
 {
     int result;
     msg_header* recvMsg;
@@ -359,20 +359,13 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     packet->header = NULL;
     packet->data = NULL;
 
-    // struct to get the source ip
-    struct sockaddr_in *src_addr = malloc(sizeof(struct sockaddr_in));
-    if(src_addr == NULL)
-    {
-        DEBUG_PRINTF("API ERROR: Failed to allocate Memory for the IP string\n")
-        return ERR_ALLOC;
-    }
     // we deal only with ipv4 but safety first ;-) --> think check is not necessary
     socklen_t addr_length = sizeof(struct sockaddr);
 
     // receive packet
     if (select_udp(socketDscp,1)==1)
     {
-    	result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)src_addr, &addr_length);
+        result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)&target_addr, &addr_length);
     }
     else
     {
@@ -384,12 +377,11 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     {
         // cleanup
         DEBUG_PRINTF("API ERROR: Failed to receive a Packet\n")
-        free(src_addr);
         return ERR_NO_PACKET;
     }
 
-    *src_ip = ntohl(src_addr->sin_addr.s_addr);
-    free(src_addr);
+    *src_ip = ntohl(target_addr.sin_addr.s_addr);
+    *src_port = htons(target_addr.sin_port);
 
     // cast packet to take a look into the header
     recvMsg = (msg_header*)buffer;
@@ -430,7 +422,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip)
     return check_packet(packet);
 }
 
-uint8_t send_msg(msg* packet, uint32_t target_ip)
+uint8_t send_msg(msg* packet, uint32_t target_ip, uint16_t target_port)
 {
     // check for invalid pointers also done here
     uint8_t ret_val = check_packet(packet);
@@ -441,6 +433,7 @@ uint8_t send_msg(msg* packet, uint32_t target_ip)
     }
 
     target_addr.sin_addr.s_addr = htonl(target_ip);
+    target_addr.sin_port = htons(target_port);
     ssize_t packet_length = sizeof(msg_header) + packet->header->length;
 
     uint8_t* bitstream = malloc(packet_length);

@@ -1,8 +1,8 @@
 /**************************************************************
 **  File        : clientAPI.h                                **
-**  Version     : 2.6                                        **
+**  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 10.05.2016                                 **
+**  Last change : 26.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -34,9 +34,10 @@ int deinit_client();
 /// @author Simon Lauser
 /// \param[in] gp : the generator polynome
 /// \param[in] target_server_ip : the IP address of the target server
+/// \param[in] target_server_port: The Port of the target server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip);
+uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip, uint16_t target_server_port);
 
 /// \brief Send a decryption request
 /// Requests the decryption of a block
@@ -45,23 +46,26 @@ uint8_t send_gp_req(uint16_t gp, uint32_t target_server_ip);
 /// \param[in] data : the data to decrypt
 /// \param[in] data_len : the amount of words in data
 /// \param[in] target_server_ip : the IP address of the target server
+/// \param[in] target_server_port: The Port of the target server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip);
+uint8_t send_dec_req(uint16_t BID, uint16_t *data, uint32_t data_len, uint32_t target_server_ip, uint16_t target_server_port);
 
 /// \brief Send an unlock request
 /// Unlock a connected server
 /// @author Philipp Duller
 /// \param[in] target_server_ip : the IP address of the target server
+/// \param[in] target_server_port: The Port of the target server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_unlock_req(uint32_t target_server_ip);
+uint8_t send_unlock_req(uint32_t target_server_ip, uint16_t target_server_port);
 
 /// \brief Send a broadcast request
 /// @author Philipp Duller
+/// \param[in] target_server_port: The Port of the target server
 /// \return The error code that occurred.
 /// @sa macros
-uint8_t send_brdcst_req();
+uint8_t send_brdcst_req(uint16_t target_server_port);
 
 /// \brief Extract a generator polynome response
 /// Extract the data from the polynome extract response
