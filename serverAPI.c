@@ -209,7 +209,7 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
         return ERR_ALLOC;
     }
 
-    temp_msg.header->func = FNC_BROADCAST;
+    temp_msg.header->func = FNC_STATUS;
     temp_msg.header->length = 0;
     temp_msg.header->mode = MODE_SERVER;
     temp_msg.header->priority = SERVER_PRIO;
