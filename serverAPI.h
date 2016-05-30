@@ -2,7 +2,7 @@
 **  File        : serverAPI.h                                **
 **  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 26.05.2016                                 **
+**  Last change : 30.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -86,6 +86,16 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
 /// @sa macros
 /// @sa FID
 uint8_t send_error_rsp(uint8_t err_code, uint32_t BID, FID fid, uint32_t target_client_ip, uint16_t target_client_port);
+
+/// \brief Send an error response for UNKNOWN as fid
+/// @author Michel Schmidt
+/// \param[in] packet : the received packet
+/// \param[in] target_client_ip : the IP address of the target client
+/// \param[in] target_client_port : the Port of the target client
+/// \return The error code that occurred during excecution.
+/// @sa macros
+/// @sa FID
+uint8_t send_fid_error_rsp(msg* packet, uint32_t target_client_ip, uint16_t target_client_port);
 
 /// \brief Extract the generator polynome
 /// Extract the generator polynome from the packet
