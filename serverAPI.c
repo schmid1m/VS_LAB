@@ -2,7 +2,7 @@
 **  File        : serverAPI.c                                **
 **  Version     : 2.7                                        **
 **  Created     : 25.04.2016                                 **
-**  Last change : 26.05.2016                                 **
+**  Last change : 30.05.2016                                 **
 **  Project     : Verteilte Systeme Labor                    **
 **************************************************************/
 
@@ -210,7 +210,7 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
     }
 
     temp_msg.header->func = FNC_STATUS;
-    temp_msg.header->length = 0;
+    temp_msg.header->length = sizeof(dat_status_response);
     temp_msg.header->mode = MODE_SERVER;
     temp_msg.header->priority = SERVER_PRIO;
     temp_msg.header->reserved = VALUE_RESERVED;
@@ -218,7 +218,7 @@ uint8_t send_status_rsp(int16_t CID, uint32_t sequence_number, uint32_t target_s
     temp_msg.header->version = PROTOCOL_VERSION;
 
     dat->clientID = htons(CID);
-    dat->wordCount = htons(sequence_number);
+    dat->wordCount = htonl(sequence_number);
     dat->reserved = VALUE_RESERVED;
 
     temp_msg.data = (void*) dat;
@@ -307,6 +307,51 @@ uint8_t send_error_rsp(uint8_t err_code, uint32_t blk_ID, FID fid, uint32_t targ
     {
         dat->blockID = 0;
     }
+
+    temp_msg.data = (void*) dat;
+
+    rsp_error_code = send_msg(&temp_msg,target_client_ip, target_client_port);
+    free(temp_msg.header);
+    free(temp_msg.data);
+    return rsp_error_code;
+}
+
+uint8_t send_fid_error_rsp(msg* packet, uint32_t target_client_ip, uint16_t target_client_port)
+{
+    msg temp_msg;
+    uint8_t rsp_error_code;
+    error* dat;
+
+    if(!initialized) return ERR_NO_INIT;
+
+    rsp_error_code = check_pointers(packet);
+    if(rsp_error_code != NO_ERROR)
+    {
+        return rsp_error_code;
+    }
+
+    temp_msg.header = malloc(sizeof(msg_header));
+    if(temp_msg.header == NULL)
+    {
+        return ERR_ALLOC;
+    }
+    dat = malloc(sizeof(error));
+    if(dat == NULL)
+    {
+        free(temp_msg.header);
+        return ERR_ALLOC;
+    }
+
+    temp_msg.header->length = 3;
+    temp_msg.header->mode = MODE_SERVER;
+    temp_msg.header->priority = SERVER_PRIO;
+    temp_msg.header->reserved = VALUE_RESERVED;
+    temp_msg.header->type = MSG_ERROR;
+    temp_msg.header->version = PROTOCOL_VERSION;
+    temp_msg.header->func = packet->header->func;
+
+    dat->errCode = ERR_NOSUCHFUNCTION;
+    dat->blockID = 0;
 
     temp_msg.data = (void*) dat;
 
