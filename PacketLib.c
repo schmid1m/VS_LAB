@@ -371,19 +371,23 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip, uint16_t* src_port)
             DEBUG_PRINTF("API ERROR: Could not allocate memory for the msg header\n")
             return ERR_ALLOC;
         }
-
-        // allocate msg data memory
-        packet->data = malloc((result - sizeof(msg_header)));
-        if(packet->data == NULL)
-        {
-            DEBUG_PRINTF("API ERROR: Could not allocate memory for the msg data field\n")
-            free(packet->header);
-            packet->header = NULL;
-            return ERR_ALLOC;
-        }
-        // copy data
+        // copy header data
         memcpy(packet->header, (msg_header*)buffer, sizeof(msg_header));
-        memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
+
+        if(packet->header->length != 0)
+        {
+            // allocate msg data memory
+            packet->data = malloc((result - sizeof(msg_header)));
+            if(packet->data == NULL)
+            {
+                DEBUG_PRINTF("API ERROR: Could not allocate memory for the msg data field\n")
+                free(packet->header);
+                packet->header = NULL;
+                return ERR_ALLOC;
+            }
+            // copy data field
+            memcpy(packet->data, &(buffer[sizeof(msg_header)]), recvMsg->length);
+        }
     }
 
     // final packet check
