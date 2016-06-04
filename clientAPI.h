@@ -9,6 +9,10 @@
 #ifndef VSLAB_CLIENT_API_H
 #define VSLAB_CLIENT_API_H
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 #include "Macros.h"
 #include "PacketLib.h"
 
@@ -112,4 +116,9 @@ uint8_t extract_brdcst_rsp(msg* packet);
 uint8_t extract_error_rsp(msg* packet, uint8_t* error_code, uint16_t* BID);
 
 /// @}
+
+#ifdef __cplusplus
+  }
+#endif
+
 #endif // VSLAB_CLIENT_API_H

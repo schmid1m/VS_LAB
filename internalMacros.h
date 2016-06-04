@@ -9,6 +9,10 @@
 #ifndef VSLAB_INT_MACROS_H
 #define VSLAB_INT_MACROS_H
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 /// \defgroup internal Macros for internal use only
 /// @{
 
@@ -44,5 +48,9 @@
 #define MSG_ERROR                           15 ///< An error occurred decoding or executing
 
 /// @}
+
+#ifdef __cplusplus
+  }
+#endif
 
 #endif // VSLAB_INT_MACROS_H

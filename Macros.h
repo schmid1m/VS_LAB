@@ -9,6 +9,10 @@
 #ifndef VSLAB_MACROS_H
 #define VSLAB_MACROS_H
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 #include"internalMacros.h"
 
 /// \defgroup macros Macros
@@ -60,5 +64,9 @@ typedef enum{
 }FID;
 
 /// @}
+
+#ifdef __cplusplus
+  }
+#endif
 
 #endif // VSLAB_MACROS_H

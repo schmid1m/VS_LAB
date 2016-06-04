@@ -9,6 +9,10 @@
 #ifndef PACKET_LIB_H
 #define PACKET_LIB_H
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 #include <stdint.h>
 
 #include <sys/socket.h>
@@ -143,5 +147,9 @@ uint8_t check_packet(msg* packet);
 uint8_t send_msg(msg* packet, uint32_t target_ip, uint16_t target_port);
 
 /// @}
+
+#ifdef __cplusplus
+  }
+#endif
 
 #endif // PACKET_LIB_H

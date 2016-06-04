@@ -9,6 +9,10 @@
 #ifndef VSLAB_COMMON_API_H
 #define VSLAB_COMMON_API_H
 
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 #include "Macros.h"
 #include "PacketLib.h"
 
@@ -50,5 +54,9 @@ uint8_t free_msg(msg* packet);
 uint8_t free_data(uint8_t* ptr);
 
 /// @}
+
+#ifdef __cplusplus
+  }
+#endif
 
 #endif // VSLAB_COMMON_API_H
