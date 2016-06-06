@@ -19,6 +19,8 @@
 #include "internalMacros.h"
 #include "commonAPI.h"
 
+#include "cwrapper.h"
+
 int socketDscp = 0;                       // socket descriptor
 struct sockaddr_in  my_addr;        // my own address information
 struct sockaddr_in  target_addr;    // target address information
@@ -416,7 +418,8 @@ uint8_t send_msg(msg* packet, uint32_t target_ip, uint16_t target_port)
     ((msg_header*)bitstream)->length = htons(((msg_header*)bitstream)->length);
 
     /* use socket-function sendto(...) */
-    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
+//    if(packet_length != sendto(socketDscp, bitstream, packet_length, 0, (struct sockaddr*)&target_addr, sizeof(struct sockaddr))){
+    if(packet_length != qt_send(bitstream, packet_length,target_ip,target_port)){
         DEBUG_PRINTF("API ERROR: Failed to send the packet\n")
         free(bitstream);
         return ERR_SEND_ERROR;
