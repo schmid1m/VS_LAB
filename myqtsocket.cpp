@@ -6,7 +6,7 @@ QUdpSocket MyQtSocket::my_sock;
 
 MyQtSocket::MyQtSocket(QObject *parent) : QObject(parent)
 {
-    this->my_sock.bind();
+    this->my_sock.bind(0, QUdpSocket::ShareAddress);
 }
 
 uint8_t MyQtSocket::Read(msg *packet, uint32_t* addr, uint16_t* port)
