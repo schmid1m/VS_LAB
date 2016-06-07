@@ -24,13 +24,13 @@ struct sockaddr_in  my_addr;        // my own address information
 struct sockaddr_in  target_addr;    // target address information
 uint8_t buffer[MAX_PACKET_LENGTH];
 
-uint8_t select_udp( int fd, int timeout ) // timeout in sekunden
+uint8_t select_udp( int fd, int timeout ) // timeout in millisekunden
 {
   fd_set fdset;
   FD_ZERO( &fdset );
   FD_SET( fd, &fdset );
 
-  struct timeval tv_timeout = { timeout, 0 };
+  struct timeval tv_timeout = { 0, 1000 * timeout };
 
   int select_retval = select( fd+1, &fdset, NULL, NULL, &tv_timeout );
 
@@ -363,7 +363,7 @@ uint8_t recv_msg(msg* packet, uint32_t* src_ip, uint16_t* src_port)
     socklen_t addr_length = sizeof(struct sockaddr);
 
     // receive packet
-    if (select_udp(socketDscp,1)==1)
+    if (select_udp(socketDscp,10)==1)
     {
         result = recvfrom(socketDscp, buffer, MAX_PACKET_LENGTH, 0, (struct sockaddr*)&target_addr, &addr_length);
     }
